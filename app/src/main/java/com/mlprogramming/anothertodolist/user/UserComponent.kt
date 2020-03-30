@@ -1,5 +1,6 @@
 package com.mlprogramming.anothertodolist.user
 
+import com.mlprogramming.anothertodolist.login.LoginActivity
 import com.mlprogramming.anothertodolist.splash.SplashActivity
 import dagger.Subcomponent
 
@@ -12,4 +13,5 @@ interface UserComponent {
     }
 
     fun inject(activity: SplashActivity)
+    fun inject(activity: LoginActivity)
 }

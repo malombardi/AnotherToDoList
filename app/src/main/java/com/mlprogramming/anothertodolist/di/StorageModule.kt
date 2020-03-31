@@ -1,6 +1,6 @@
 package com.mlprogramming.anothertodolist.di
 
-import com.mlprogramming.anothertodolist.storage.RoomStorage
+import com.mlprogramming.anothertodolist.storage.FirebaseStorage
 import com.mlprogramming.anothertodolist.storage.Storage
 import dagger.Binds
 import dagger.Module
@@ -9,5 +9,5 @@ import dagger.Module
 abstract class StorageModule {
 
     @Binds
-    abstract fun provideStorage(storage: RoomStorage): Storage
+    abstract fun provideStorage(storage: FirebaseStorage): Storage
 }

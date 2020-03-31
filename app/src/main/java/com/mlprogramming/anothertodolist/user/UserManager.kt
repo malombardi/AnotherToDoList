@@ -26,10 +26,7 @@ class UserManager @Inject constructor(
         const val RC_SIGN_IN = 9001
     }
 
-    private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(Resources.getSystem().getString(R.string.default_web_client_id))
-        .requestEmail()
-        .build()
+    lateinit var gso: GoogleSignInOptions
     private var googleApiClient: GoogleApiClient? = null
 
     var userComponent: UserComponent? = null
@@ -48,6 +45,11 @@ class UserManager @Inject constructor(
 
     fun login(appCompatActivity: AppCompatActivity) {
         if (googleApiClient == null) {
+            gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(appCompatActivity.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
             googleApiClient = GoogleApiClient.Builder(appCompatActivity)
                 .enableAutoManage(
                     appCompatActivity,

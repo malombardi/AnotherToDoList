@@ -12,20 +12,12 @@ class SharedPreferencesUserStorage @Inject constructor(context: Context) : UserS
         return sharedPreferences.getString("Uid", null)
     }
 
-    override fun getUserName(): String? {
-        return sharedPreferences.getString("UserName", null)
-    }
-
     override fun getUserMail(): String? {
         return sharedPreferences.getString("UserMail", null)
     }
 
     override fun setUserId(uid: String) {
         setString("Uid", uid)
-    }
-
-    override fun setUserName(userName: String) {
-        setString("UserName", userName)
     }
 
     override fun setUserMail(userMail: String) {

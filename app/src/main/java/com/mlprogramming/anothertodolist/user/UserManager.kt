@@ -29,18 +29,23 @@ class UserManager @Inject constructor(
     lateinit var gso: GoogleSignInOptions
     private var googleApiClient: GoogleApiClient? = null
 
-    private var userComponent: UserComponent? = null
+    var userComponent: UserComponent? = null
 
-    val username: String
-        get() = auth.getUserName()
+    fun getUserName(): String? {
+        return auth.getUserMail().let {
+            it?.split("@")!![0]
+        }
+    }
 
-    val userId: String
-        get() = auth.getUserId()
+    fun getUserId(): String? {
+        return auth.getUserId()
+    }
 
-    val userMail: String
-        get() = auth.getUserMail()
+    fun getUserMail(): String?{
+        return auth.getUserMail()
+    }
 
-    fun isUserLoggedIn() = userComponent != null
+    fun isUserLoggedIn() = userComponent != null || userStorage.getUserId() != null
 
     fun logout() {
         userStorage.clearUser()
@@ -76,10 +81,15 @@ class UserManager @Inject constructor(
             .addOnCompleteListener(onCompleteListener)
     }
 
+    fun loginUserLoggedIn() {
+        if (userComponent == null) {
+            userComponent = userComponentFactory.create()
+        }
+    }
+
     fun userJustLoggedIn() {
-        userStorage.setUserId(userId)
-        userStorage.setUserName(username)
-        userStorage.setUserMail(userMail)
+        getUserId()?.let { userStorage.setUserId(it) }
+        getUserMail()?.let { userStorage.setUserMail(it) }
 
         userComponent = userComponentFactory.create()
     }

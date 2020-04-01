@@ -6,22 +6,27 @@ import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 class FirebaseAuthInterface @Inject constructor(context: Context) : AuthInterface {
-    private var firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
-    private var firebaseUser : FirebaseUser? = firebaseAuth.currentUser
 
-    override fun getUserId(): String {
-        return firebaseUser?.uid!!
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var firebaseUser: FirebaseUser? = firebaseAuth.currentUser
+
+    override fun initUserData() {
+        firebaseUser = firebaseAuth.currentUser
     }
 
-    override fun getUserMail(): String {
-        return firebaseUser?.email!!
+    override fun getUserId(): String? {
+        return firebaseUser?.uid
     }
 
-    override fun getUserName(): String {
-        return firebaseUser?.displayName!!
+    override fun getUserMail(): String? {
+        return firebaseUser?.email
     }
 
-    override fun logoutUser(){
+    override fun getUserName(): String? {
+        return firebaseUser?.displayName
+    }
+
+    override fun logoutUser() {
         firebaseAuth.signOut();
     }
 }

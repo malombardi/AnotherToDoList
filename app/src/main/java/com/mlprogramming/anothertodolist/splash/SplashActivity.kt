@@ -15,12 +15,13 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val userStorage = (application as AnotherToDoListApplication).appComponent.userStorage()
+        val userManager = (application as AnotherToDoListApplication).appComponent.userManager()
 
-        if (userStorage.getUserId() != null) {
+        if (!userManager.isUserLoggedIn()) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {
+            userManager.loginUserLoggedIn()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

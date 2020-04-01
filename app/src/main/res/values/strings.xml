@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AnotherToDoList</string>
+    <string name="login_error">Error logging you in. Try again</string>
 </resources>

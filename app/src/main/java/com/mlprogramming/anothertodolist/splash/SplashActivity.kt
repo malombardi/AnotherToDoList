@@ -1,8 +1,10 @@
 package com.mlprogramming.anothertodolist.splash
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
+import com.mlprogramming.anothertodolist.login.LoginActivity
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity(){
@@ -13,9 +15,10 @@ class SplashActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         val userManager = (application as AnotherToDoListApplication).appComponent.userManager()
-        TODO("send the user to the corresponding activity")
-        if (!userManager.isUserLoggedIn()) {
 
+        if (!userManager.isUserLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         } else {
 
         }

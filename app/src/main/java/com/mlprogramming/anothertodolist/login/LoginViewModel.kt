@@ -29,6 +29,7 @@ class LoginViewModel @Inject constructor(private val userManager: UserManager) {
     }
 
     fun onLoginSuccess() {
+        userManager.userJustLoggedIn()
         _loginState.value = LoginSuccess
     }
 

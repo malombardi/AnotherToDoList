@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.user
 
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.auth.api.Auth
@@ -12,6 +11,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.auth.AuthInterface
+import com.mlprogramming.anothertodolist.storage.UserStorage
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class UserManager @Inject constructor(
     private val auth: AuthInterface,
-
+    private val userStorage: UserStorage,
     private val userComponentFactory: UserComponent.Factory
 ) {
     companion object {
@@ -29,15 +29,21 @@ class UserManager @Inject constructor(
     lateinit var gso: GoogleSignInOptions
     private var googleApiClient: GoogleApiClient? = null
 
-    var userComponent: UserComponent? = null
-        private set
+    private var userComponent: UserComponent? = null
 
     val username: String
-        get() = auth.getLoggedUser()
+        get() = auth.getUserName()
+
+    val userId: String
+        get() = auth.getUserId()
+
+    val userMail: String
+        get() = auth.getUserMail()
 
     fun isUserLoggedIn() = userComponent != null
 
     fun logout() {
+        userStorage.clearUser()
         auth.logoutUser()
         Auth.GoogleSignInApi.signOut(googleApiClient);
         userComponent = null
@@ -71,6 +77,10 @@ class UserManager @Inject constructor(
     }
 
     fun userJustLoggedIn() {
+        userStorage.setUserId(userId)
+        userStorage.setUserName(username)
+        userStorage.setUserMail(userMail)
+
         userComponent = userComponentFactory.create()
     }
 }

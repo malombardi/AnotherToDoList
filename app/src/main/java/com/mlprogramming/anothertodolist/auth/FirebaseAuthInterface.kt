@@ -9,7 +9,15 @@ class FirebaseAuthInterface @Inject constructor(context: Context) : AuthInterfac
     private var firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
     private var firebaseUser : FirebaseUser? = firebaseAuth.currentUser
 
-    override fun getLoggedUser(): String {
+    override fun getUserId(): String {
+        return firebaseUser?.uid!!
+    }
+
+    override fun getUserMail(): String {
+        return firebaseUser?.email!!
+    }
+
+    override fun getUserName(): String {
         return firebaseUser?.displayName!!
     }
 

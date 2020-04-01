@@ -1,5 +1,5 @@
 package com.mlprogramming.anothertodolist.storage
 
-interface Storage {
+interface ItemStorage {
     fun getItem()
 }

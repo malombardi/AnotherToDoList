@@ -8,16 +8,16 @@ import com.mlprogramming.anothertodolist.login.LoginActivity
 import com.mlprogramming.anothertodolist.main.MainActivity
 import javax.inject.Inject
 
-class SplashActivity : AppCompatActivity(){
+class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var splashViewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val userManager = (application as AnotherToDoListApplication).appComponent.userManager()
+        val userStorage = (application as AnotherToDoListApplication).appComponent.userStorage()
 
-        if (!userManager.isUserLoggedIn()) {
+        if (userStorage.getUserId() != null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {

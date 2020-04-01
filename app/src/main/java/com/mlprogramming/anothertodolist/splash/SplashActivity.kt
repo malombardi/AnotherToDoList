@@ -2,10 +2,10 @@ package com.mlprogramming.anothertodolist.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.login.LoginActivity
+import com.mlprogramming.anothertodolist.main.MainActivity
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
@@ -21,7 +21,8 @@ class SplashActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {
-            Toast.makeText(this,"USUARIO LOGUEADO", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
     }
 }

@@ -2,7 +2,7 @@
     package="com.mlprogramming.anothertodolist">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -16,5 +16,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".login.LoginActivity" />
+        <activity android:name=".main.MainActivity" />
     </application>
 </manifest>

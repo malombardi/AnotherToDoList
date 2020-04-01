@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
+import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.user.UserManager
 import javax.inject.Inject
 
@@ -40,8 +41,8 @@ class LoginActivity : AppCompatActivity(), OnCompleteListener<AuthResult>,
         loginViewModel.loginState.observe(this, Observer<LoginViewState> { state ->
             when (state) {
                 is LoginSuccess -> {
-                    Toast.makeText(this, "Login success", Toast.LENGTH_LONG).show()
-                    TODO("go to main activity")
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                 }
                 is LoginError -> errorTextView.visibility = View.VISIBLE
             }

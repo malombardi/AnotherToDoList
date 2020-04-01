@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.user
 
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.auth.api.Auth

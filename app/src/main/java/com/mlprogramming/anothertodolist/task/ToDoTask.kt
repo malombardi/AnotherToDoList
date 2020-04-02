@@ -13,9 +13,8 @@ data class Place(
 )
 
 data class ToDoTask(
-    val title: String,
-    val description: String,
-    val date: String,
-    val status: Status,
-    val place: Place?
+    var id: String? = "",
+    var title: String? = "",
+    var description: String? = "",
+    var date: String? = ""
 ) : Serializable

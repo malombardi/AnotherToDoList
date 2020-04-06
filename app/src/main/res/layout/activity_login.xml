@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@color/primaryColor"
     android:orientation="vertical">
 
     <TextView
@@ -32,7 +33,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/login_error"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/primaryTextColor"
         android:visibility="invisible"
         android:layout_gravity="bottom|center_horizontal"/>
 </FrameLayout>

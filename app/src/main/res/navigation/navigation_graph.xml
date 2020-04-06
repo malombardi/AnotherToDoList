@@ -12,11 +12,20 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_taskFragment"
-            app:destination="@id/taskFragment" />
+            app:destination="@id/taskFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@+id/mainFragment" />
+        <argument
+            android:name="taskId"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.mlprogramming.anothertodolist.task.TaskFragment"
-        android:label="PaymentServiceFragment" />
+        android:label="TaskFragment" />
 </navigation>

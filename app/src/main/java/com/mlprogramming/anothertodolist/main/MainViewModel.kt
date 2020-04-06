@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.mlprogramming.anothertodolist.task.ToDoTask
+import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(
@@ -23,6 +23,7 @@ sealed class UiIntent {
     object ShowAllTasks : UiIntent()
     object NavigationCompleted : UiIntent()
     object ToastShown : UiIntent()
+    object AddTask : UiIntent()
 }
 
 sealed class Command {
@@ -68,6 +69,7 @@ class MainViewModel : ViewModel() {
 
             is UiIntent.Loading -> onLoading()
             is UiIntent.ToastShown -> onToastShown()
+            is UiIntent.AddTask -> onCommand(Command.ProceedToTask(null))
         }
     }
 
@@ -80,7 +82,7 @@ class MainViewModel : ViewModel() {
         onCommand(Command.ToastShown)
     }
 
-    private fun onLoading(){
+    private fun onLoading() {
         onCommand(Command.Loading)
     }
 
@@ -88,10 +90,12 @@ class MainViewModel : ViewModel() {
         return when (command) {
             is Command.ProceedToTask -> {
                 val args = Bundle().apply {
-                    putSerializable(
-                        ToDoTask::class.java.simpleName,
-                        command.task
-                    )
+                    command.task.let {
+                        this.putSerializable(
+                            ToDoTask::class.java.simpleName,
+                            command.task
+                        )
+                    }
                 }
                 state.copy(
                     navDirection = NavDirection.ToTask(args),

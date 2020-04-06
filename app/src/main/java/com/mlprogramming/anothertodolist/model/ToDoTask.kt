@@ -1,4 +1,4 @@
-package com.mlprogramming.anothertodolist.task
+package com.mlprogramming.anothertodolist.model
 
 import java.io.Serializable
 

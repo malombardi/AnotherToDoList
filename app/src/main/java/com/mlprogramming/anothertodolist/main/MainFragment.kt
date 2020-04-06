@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
-import com.mlprogramming.anothertodolist.task.ToDoTask
+import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_task.view.*
@@ -66,6 +66,10 @@ class MainFragment : Fragment() {
         tasksRecyclerView.apply {
             layoutManager = manager
             setHasFixedSize(true)
+        }
+
+        addTask.setOnClickListener {
+            mainViewModel.onHandleIntent(UiIntent.AddTask)
         }
     }
 

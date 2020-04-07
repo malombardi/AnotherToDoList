@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.storage.ItemStorage
+import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_task.view.*
@@ -28,10 +30,8 @@ class MainFragment : Fragment() {
     private var mFirebaseAdapter: FirebaseRecyclerAdapter<ToDoTask, TaskViewHolder>? = null
     private lateinit var manager: LinearLayoutManager
 
-    private lateinit var firebaseDatabaseReference: DatabaseReference
-    private var options: FirebaseRecyclerOptions<ToDoTask>? = null
-
     private lateinit var userManager: UserManager
+    private lateinit var storageManager: StorageManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,11 +47,13 @@ class MainFragment : Fragment() {
             (activity!!.application as AnotherToDoListApplication).appComponent.userManager()
         userManager.userComponent!!.inject(this)
 
+        storageManager =
+            (activity!!.application as AnotherToDoListApplication).appComponent.storageManager()
+
+        navigator = Navigator((activity as MainActivity).getNavController())
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         mainViewModel.setUserManager(userManager)
-        mainViewModel.initRepository()
 
-        firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
         setupView()
         setupStateObserver()
     }
@@ -83,7 +85,6 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), state.msgs, Toast.LENGTH_SHORT).show()
                 mainViewModel.onHandleIntent(UiIntent.ToastShown)
             }
-
             state.showTasks?.let {
                 when (it) {
                     true -> {
@@ -93,7 +94,7 @@ class MainFragment : Fragment() {
                     false -> tasksRecyclerView.visibility = View.GONE
                 }
                 mFirebaseAdapter =
-                    object : FirebaseRecyclerAdapter<ToDoTask, TaskViewHolder>(options!!) {
+                    object : FirebaseRecyclerAdapter<ToDoTask, TaskViewHolder>(storageManager.getFirebaseRecyclerOptions()!!) {
                         override fun onCreateViewHolder(
                             parent: ViewGroup,
                             viewType: Int
@@ -117,29 +118,26 @@ class MainFragment : Fragment() {
                 tasksRecyclerView.adapter = mFirebaseAdapter
                 registerFirebaseListening()
 
-                mFirebaseAdapter!!.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                mFirebaseAdapter!!.registerAdapterDataObserver(object :
+                    RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
                         progressBar.visibility = View.GONE
                     }
                 })
             }
-
             state.loading?.let {
                 when (it) {
                     true -> {
                         progressBar.visibility = View.VISIBLE
-                        if (options == null) {
-                            val query = firebaseDatabaseReference.child("root")
-                                .child(userManager.getUserId()!!)
-
-                            options = FirebaseRecyclerOptions.Builder<ToDoTask>()
-                                .setQuery(query, ToDoTask::class.java)
-                                .build()
-                        }
                         tasksRecyclerView.visibility = View.GONE
+                        val isRepoInitialized = mainViewModel.initRepository(storageManager)
 
-                        mainViewModel.onHandleIntent(UiIntent.ShowAllTasks)
+                        if (isRepoInitialized){
+                            mainViewModel.onHandleIntent(UiIntent.ShowAllTasks)
+                        }else{
+                            mainViewModel.onHandleIntent(UiIntent.Loading)
+                        }
                     }
                     false -> progressBar.visibility = View.GONE
                 }

@@ -7,7 +7,7 @@ import com.mlprogramming.anothertodolist.model.ToDoTask
 
 data class UiState(
     val navDirection: NavDirection? = null,
-    val showTask: Boolean? = null,
+    val showTask: ToDoTask? = null,
     val addTask: Boolean? = null,
     val loading: Boolean? = null
 )
@@ -26,7 +26,7 @@ sealed class Command {
     object AddTask : Command()
 }
 
-class TaskViewModel(val taskId: Int) : ViewModel() {
+class TaskViewModel(val toDoTask: ToDoTask?) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>().apply {
         value = getInitialState()
@@ -66,7 +66,7 @@ class TaskViewModel(val taskId: Int) : ViewModel() {
             is Command.ShowTask -> {
                 state.copy(
                     navDirection = null,
-                    showTask = true,
+                    showTask = command.task,
                     loading = false,
                     addTask = false
                 )
@@ -74,7 +74,7 @@ class TaskViewModel(val taskId: Int) : ViewModel() {
             is Command.AddTask -> {
                 state.copy(
                     navDirection = null,
-                    showTask = false,
+                    showTask = null,
                     loading = false,
                     addTask = true
                 )
@@ -82,7 +82,7 @@ class TaskViewModel(val taskId: Int) : ViewModel() {
             is Command.Loading -> {
                 state.copy(
                     navDirection = null,
-                    showTask = false,
+                    showTask = null,
                     loading = true,
                     addTask = false
                 )

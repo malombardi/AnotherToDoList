@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">AnotherToDoList</string>
     <string name="login_error">Error logging you in. Try again</string>
+    <string name="label_task_title">Title</string>
+    <string name="label_task_description">Description</string>
 </resources>

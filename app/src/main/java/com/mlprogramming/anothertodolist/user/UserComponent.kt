@@ -4,6 +4,7 @@ import com.mlprogramming.anothertodolist.login.LoginActivity
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.MainFragment
 import com.mlprogramming.anothertodolist.splash.SplashActivity
+import com.mlprogramming.anothertodolist.task.TaskFragment
 import dagger.Subcomponent
 
 @LoggedUserScope
@@ -17,4 +18,5 @@ interface UserComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: LoginActivity)
     fun inject(fragment: MainFragment)
+    fun inject(fragment: TaskFragment)
 }

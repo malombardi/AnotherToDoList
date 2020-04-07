@@ -2,6 +2,8 @@ package com.mlprogramming.anothertodolist.di
 
 import android.content.Context
 import com.mlprogramming.anothertodolist.login.LoginComponent
+import com.mlprogramming.anothertodolist.storage.ItemStorage
+import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.storage.UserStorage
 import com.mlprogramming.anothertodolist.user.UserManager
 import dagger.BindsInstance
@@ -21,5 +23,6 @@ interface AppComponent {
 
     fun userManager(): UserManager
     fun userStorage(): UserStorage
+    fun storageManager(): StorageManager
     fun loginComponent(): LoginComponent.Factory
 }

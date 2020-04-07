@@ -7,6 +7,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(
@@ -36,7 +37,7 @@ sealed class Command {
 
 class MainViewModel : ViewModel() {
     private lateinit var userManager: UserManager
-    private lateinit var firebaseDatabaseReference: DatabaseReference
+    private lateinit var storageManager: StorageManager
     private var options: FirebaseRecyclerOptions<ToDoTask>? = null
 
     private val _uiState = MutableLiveData<UiState>().apply {
@@ -50,23 +51,21 @@ class MainViewModel : ViewModel() {
         this.userManager = userManager
     }
 
-    fun initRepository() {
-        firebaseDatabaseReference =
-            FirebaseDatabase.getInstance().reference.child("root").child(userManager.getUserId()!!)
-
-        options = FirebaseRecyclerOptions.Builder<ToDoTask>()
-            .setQuery(firebaseDatabaseReference, ToDoTask::class.java)
-            .build()
+    fun initRepository(storageManager: StorageManager): Boolean {
+        userManager.getUserId()?.let {
+            this.storageManager = storageManager
+            storageManager.prepareAllItems(it)
+            options = storageManager.getFirebaseRecyclerOptions()
+            return true
+        }
+        return false
     }
 
     fun onHandleIntent(intent: UiIntent) {
         return when (intent) {
             is UiIntent.ProceedToTask -> onCommand(Command.ProceedToTask(intent.task))
-            UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
-
             is UiIntent.ShowAllTasks -> onCommand(Command.ShowAllTasks(options!!))
-            UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
-
+            is UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
             is UiIntent.Loading -> onLoading()
             is UiIntent.ToastShown -> onToastShown()
             is UiIntent.AddTask -> onCommand(Command.ProceedToTask(null))
@@ -126,7 +125,7 @@ class MainViewModel : ViewModel() {
                     loading = false
                 )
             }
-            Command.NavigationCompleted -> state.copy(navDirection = null)
+            is Command.NavigationCompleted -> state.copy(navDirection = null)
         }
     }
 

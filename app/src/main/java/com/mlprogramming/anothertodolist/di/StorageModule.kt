@@ -11,7 +11,7 @@ import dagger.Module
 abstract class StorageModule {
 
     @Binds
-    abstract fun provideItemStorage(storage: FirebaseItemStorage): ItemStorage
+    abstract fun provideOnlineItemStorage(storage: FirebaseItemStorage): ItemStorage
     @Binds
     abstract fun provideUserStorage(storage: SharedPreferencesUserStorage): UserStorage
 }

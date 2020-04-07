@@ -6,4 +6,5 @@ interface AuthInterface {
     fun getUserMail(): String?
     fun logoutUser()
     fun initUserData()
+    fun isUserLoggedin(): Boolean
 }

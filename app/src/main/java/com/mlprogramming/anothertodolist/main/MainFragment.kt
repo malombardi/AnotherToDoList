@@ -11,13 +11,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.model.ToDoTask
-import com.mlprogramming.anothertodolist.storage.ItemStorage
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_main.*

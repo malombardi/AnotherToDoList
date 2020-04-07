@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserManager @Inject constructor(
-    private val auth: AuthInterface,
+    private var auth: AuthInterface,
     private val userStorage: UserStorage,
     private val userComponentFactory: UserComponent.Factory
 ) {
@@ -41,7 +41,7 @@ class UserManager @Inject constructor(
         return auth.getUserId()
     }
 
-    fun getUserMail(): String?{
+    fun getUserMail(): String? {
         return auth.getUserMail()
     }
 
@@ -88,6 +88,7 @@ class UserManager @Inject constructor(
     }
 
     fun userJustLoggedIn() {
+        auth.initUserData()
         getUserId()?.let { userStorage.setUserId(it) }
         getUserMail()?.let { userStorage.setUserMail(it) }
 

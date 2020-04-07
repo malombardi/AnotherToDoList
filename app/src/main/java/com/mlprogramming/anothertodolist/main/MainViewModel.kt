@@ -21,6 +21,7 @@ data class UiState(
 sealed class UiIntent {
     data class ProceedToTask(var task: ToDoTask?) : UiIntent()
     object Loading : UiIntent()
+    object StopLoading : UiIntent()
     object ShowAllTasks : UiIntent()
     object NavigationCompleted : UiIntent()
     object ToastShown : UiIntent()
@@ -31,6 +32,7 @@ sealed class Command {
     data class ProceedToTask(var task: ToDoTask?) : Command()
     data class ShowAllTasks(var options: FirebaseRecyclerOptions<ToDoTask>) : Command()
     object Loading : Command()
+    object StopLoading : Command()
     object NavigationCompleted : Command()
     object ToastShown : Command()
 }
@@ -67,6 +69,7 @@ class MainViewModel : ViewModel() {
             is UiIntent.ShowAllTasks -> onCommand(Command.ShowAllTasks(options!!))
             is UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
             is UiIntent.Loading -> onLoading()
+            is UiIntent.StopLoading -> onStopLoading()
             is UiIntent.ToastShown -> onToastShown()
             is UiIntent.AddTask -> onCommand(Command.ProceedToTask(null))
         }
@@ -83,6 +86,10 @@ class MainViewModel : ViewModel() {
 
     private fun onLoading() {
         onCommand(Command.Loading)
+    }
+
+    private fun onStopLoading() {
+        onCommand(Command.StopLoading)
     }
 
     private fun reduce(state: UiState, command: Command): UiState {
@@ -116,6 +123,14 @@ class MainViewModel : ViewModel() {
                     showTasks = null,
                     msgs = null,
                     loading = true,
+                    options = null
+                )
+            }
+            is Command.StopLoading -> {
+                state.copy(
+                    showTasks = null,
+                    msgs = null,
+                    loading = false,
                     options = null
                 )
             }

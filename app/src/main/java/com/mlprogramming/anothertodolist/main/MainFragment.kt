@@ -118,7 +118,7 @@ class MainFragment : Fragment() {
                     RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
-                        progressBar.visibility = View.GONE
+                        mainViewModel.onHandleIntent(UiIntent.StopLoading)
                     }
                 })
             }
@@ -135,7 +135,9 @@ class MainFragment : Fragment() {
                             mainViewModel.onHandleIntent(UiIntent.Loading)
                         }
                     }
-                    false -> progressBar.visibility = View.GONE
+                    false -> {
+                        progressBar.visibility = View.GONE
+                    }
                 }
             }
         })

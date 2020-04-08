@@ -23,7 +23,10 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/label_task_title" />
+            android:hint="@string/label_task_title"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -40,7 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/label_task_description"
-            android:inputType="textMultiLine"
+            android:imeOptions="actionNext"
+            android:inputType="textImeMultiLine"
+            android:maxLines="2"
             android:minHeight="@dimen/default__multiline_min_height" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,7 +62,10 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/label_task_date" />
+            android:hint="@string/label_task_date"
+            android:imeOptions="actionDone"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.chip.ChipGroup
@@ -92,7 +100,7 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/task_alarm"/>
+        app:layout_constraintTop_toBottomOf="@+id/task_alarm" />
 
     <Button
         android:id="@+id/add_place"

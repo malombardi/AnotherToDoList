@@ -4,15 +4,12 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(
     val navDirection: NavDirection? = null,
-    val showTasks: Boolean? = null,
     val msgs: String? = null,
     val loading: Boolean? = false,
     val options: FirebaseRecyclerOptions<ToDoTask>? = null
@@ -22,8 +19,8 @@ sealed class UiIntent {
     data class ProceedToTask(var task: ToDoTask?) : UiIntent()
     object Loading : UiIntent()
     object StopLoading : UiIntent()
-    object ShowAllTasks : UiIntent()
     object NavigationCompleted : UiIntent()
+    object ShowAllTasks : UiIntent()
     object ToastShown : UiIntent()
     object AddTask : UiIntent()
 }
@@ -106,13 +103,12 @@ class MainViewModel : ViewModel() {
                 state.copy(
                     navDirection = NavDirection.ToTask(args),
                     msgs = null,
-                    loading = false
+                    loading = true
                 )
 
             }
             is Command.ShowAllTasks -> {
                 state.copy(
-                    showTasks = true,
                     msgs = null,
                     loading = null,
                     options = command.options
@@ -120,7 +116,6 @@ class MainViewModel : ViewModel() {
             }
             is Command.Loading -> {
                 state.copy(
-                    showTasks = null,
                     msgs = null,
                     loading = true,
                     options = null
@@ -128,7 +123,6 @@ class MainViewModel : ViewModel() {
             }
             is Command.StopLoading -> {
                 state.copy(
-                    showTasks = null,
                     msgs = null,
                     loading = false,
                     options = null
@@ -146,7 +140,6 @@ class MainViewModel : ViewModel() {
 
     private fun getInitialState() = UiState(
         navDirection = null,
-        showTasks = null,
         msgs = null,
         loading = null
     )

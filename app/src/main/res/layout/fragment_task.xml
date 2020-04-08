@@ -44,6 +44,45 @@
             android:minHeight="@dimen/default__multiline_min_height" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/task_date"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_description">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_task_date" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/task_alarm"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        android:layout_width="144dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:text="@string/add_alarm"
+        android:textColor="@color/primaryTextColor"
+        app:icon="@drawable/ic_alarm_add"
+        app:iconTint="@color/primaryTextColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_date" />
+
+    <TextView
+        android:id="@+id/task_alarm_text"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        tools:text="Alarm"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintStart_toEndOf="@+id/task_alarm"
+        app:layout_constraintTop_toBottomOf="@+id/task_date" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/tasks_labels"
         android:layout_width="0dp"
@@ -51,85 +90,48 @@
         android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/task_description"
+        app:layout_constraintTop_toBottomOf="@+id/task_alarm"
         app:singleLine="false"
-        app:singleSelection="false">
+        app:singleSelection="false" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip2"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:minWidth="@dimen/default_min_width"
-            android:minHeight="@dimen/default_min_height"
-            android:padding="@dimen/default_padding"
-            android:text="Home"
-            app:chipBackgroundColor="@color/secondaryColor"
-            app:chipCornerRadius="@dimen/chip_corner_radius"
-            app:closeIconVisible="true"
-            app:rippleColor="@color/primaryDarkColor" />
+            android:layout_weight="1"
+            android:text="@string/add_place"
+            android:textColor="@color/primaryTextColor"
+            app:icon="@drawable/ic_add"
+            app:iconTint="@color/primaryTextColor" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip3"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+        <Button
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:minWidth="@dimen/default_min_width"
-            android:minHeight="@dimen/default_min_height"
-            android:padding="@dimen/default_padding"
-            android:text="Home"
-            app:chipBackgroundColor="@color/secondaryColor"
-            app:chipCornerRadius="@dimen/chip_corner_radius"
-            app:closeIconVisible="true"
-            app:rippleColor="@color/primaryDarkColor" />
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@color/primaryTextColor" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip4"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+        <Button
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:minWidth="@dimen/default_min_width"
-            android:minHeight="@dimen/default_min_height"
-            android:padding="@dimen/default_padding"
-            android:text="Home"
-            app:chipBackgroundColor="@color/secondaryColor"
-            app:chipCornerRadius="@dimen/chip_corner_radius"
-            app:closeIconVisible="true"
-            app:rippleColor="@color/primaryDarkColor" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip5"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:minWidth="@dimen/default_min_width"
-            android:minHeight="@dimen/default_min_height"
-            android:padding="@dimen/default_padding"
-            android:text="Home"
-            app:chipBackgroundColor="@color/secondaryColor"
-            app:chipCornerRadius="@dimen/chip_corner_radius"
-            app:closeIconVisible="true"
-            app:rippleColor="@color/primaryDarkColor" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip6"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:minWidth="@dimen/default_min_width"
-            android:minHeight="@dimen/default_min_height"
-            android:padding="@dimen/default_padding"
-            android:text="Home"
-            app:chipBackgroundColor="@color/secondaryColor"
-            app:chipCornerRadius="@dimen/chip_corner_radius"
-            app:closeIconVisible="true"
-            app:rippleColor="@color/primaryDarkColor" />
-    </com.google.android.material.chip.ChipGroup>
+            android:layout_weight="1"
+            android:text="@string/save"
+            android:textColor="@color/primaryTextColor" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"

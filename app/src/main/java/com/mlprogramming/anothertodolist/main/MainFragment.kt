@@ -81,16 +81,12 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), state.msgs, Toast.LENGTH_SHORT).show()
                 mainViewModel.onHandleIntent(UiIntent.ToastShown)
             }
-            state.showTasks?.let {
-                when (it) {
-                    true -> {
-                        tasksRecyclerView.visibility = View.VISIBLE
-                        progressBar.visibility = View.VISIBLE
-                    }
-                    false -> tasksRecyclerView.visibility = View.GONE
-                }
+            state.options?.let {
+                tasksRecyclerView.visibility = View.VISIBLE
+                progressBar.visibility = View.VISIBLE
+
                 mFirebaseAdapter =
-                    object : FirebaseRecyclerAdapter<ToDoTask, TaskViewHolder>(storageManager.getFirebaseRecyclerOptions()!!) {
+                    object : FirebaseRecyclerAdapter<ToDoTask, TaskViewHolder>(it) {
                         override fun onCreateViewHolder(
                             parent: ViewGroup,
                             viewType: Int
@@ -121,6 +117,11 @@ class MainFragment : Fragment() {
                         mainViewModel.onHandleIntent(UiIntent.StopLoading)
                     }
                 })
+                mFirebaseAdapter?.let {
+                    if (it.itemCount > 0) {
+                        mainViewModel.onHandleIntent(UiIntent.StopLoading)
+                    }
+                }
             }
             state.loading?.let {
                 when (it) {
@@ -129,9 +130,9 @@ class MainFragment : Fragment() {
                         tasksRecyclerView.visibility = View.GONE
                         val isRepoInitialized = mainViewModel.initRepository(storageManager)
 
-                        if (isRepoInitialized){
+                        if (isRepoInitialized) {
                             mainViewModel.onHandleIntent(UiIntent.ShowAllTasks)
-                        }else{
+                        } else {
                             mainViewModel.onHandleIntent(UiIntent.Loading)
                         }
                     }

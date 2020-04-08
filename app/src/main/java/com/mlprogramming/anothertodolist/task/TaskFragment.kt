@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.android.material.chip.Chip
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
@@ -22,12 +22,14 @@ class TaskFragment : Fragment() {
 
     private var task: ToDoTask? = null
     private lateinit var userManager: UserManager
+    private lateinit var inflater: LayoutInflater
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        this.inflater = inflater
         return inflater.inflate(R.layout.fragment_task, container, false)
     }
 
@@ -68,10 +70,30 @@ class TaskFragment : Fragment() {
                     true -> {
                         progressBar.visibility = View.VISIBLE
 
-                        taskViewModel.onHandleIntent(UiIntent.ShowTask(task = task!!))
+                        taskViewModel.onHandleIntent(UiIntent.ShowTask)
                     }
                     false -> progressBar.visibility = View.GONE
                 }
+            }
+            state.taskTitle?.let {
+                task_title.editText?.setText(it)
+            }
+            state.taskDescription?.let {
+                task_description.editText?.setText(it)
+            }
+            state.taskDate?.let {
+                task_date.editText?.setText(it)
+            }
+            state.taskPlaces?.let {
+                for (place in it) {
+                    val chip =
+                        inflater.inflate(R.layout.task_place_choice, tasks_labels, true) as Chip
+                    chip.text = place.name
+                    tasks_labels.addView(chip)
+                }
+            }
+            state.taskAlarm?.let {
+                TODO()
             }
         })
     }

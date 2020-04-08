@@ -3,4 +3,12 @@
     <string name="login_error">Error logging you in. Try again</string>
     <string name="label_task_title">Title</string>
     <string name="label_task_description">Description</string>
+    <string name="add_place">Add place</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="label_task_date">"Due date"</string>
+    <string name="add_alarm">Add alarm</string>
+    <string name="remove_alarm">Remove alarm</string>
+    <string name="edit_alarm">Edit alarm</string>
 </resources>

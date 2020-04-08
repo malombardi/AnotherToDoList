@@ -12,9 +12,16 @@ data class Place(
     val name: String
 )
 
+data class Alarm(
+    val time: String
+)
+
 data class ToDoTask(
     var id: String? = "",
     var title: String? = "",
     var description: String? = "",
-    var date: String? = ""
+    var date: String? = "",
+    var places: List<Place>? = null,
+    var alarms: List<Alarm>? = null,
+    var status: Status? = null
 ) : Serializable

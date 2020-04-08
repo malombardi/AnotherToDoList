@@ -7,6 +7,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import javax.inject.Inject
 
+const val  ROOT = "root"
+
 class FirebaseItemStorage @Inject constructor(context: Context) : ItemStorage {
     private var firebaseDatabaseReference: DatabaseReference? = null
     private var options: FirebaseRecyclerOptions<ToDoTask>? = null
@@ -28,13 +30,28 @@ class FirebaseItemStorage @Inject constructor(context: Context) : ItemStorage {
         }
 
         if (options == null) {
-            val query = firebaseDatabaseReference!!.child("root")
+            val query = firebaseDatabaseReference!!.child(ROOT)
                 .child(uid)
 
             options = FirebaseRecyclerOptions.Builder<ToDoTask>()
                 .setQuery(query, ToDoTask::class.java)
                 .build()
         }
+    }
+
+    override fun saveItem(uid: String, toDoTask: ToDoTask) {
+        firebaseDatabaseReference!!.child(ROOT)
+            .child(uid).child(toDoTask.id!!).setValue(toDoTask)
+    }
+
+    override fun updateItem(uid: String, toDoTask: ToDoTask) {
+        firebaseDatabaseReference!!.child(ROOT)
+            .child(uid).child(toDoTask.id!!).push().setValue(toDoTask)
+    }
+
+    override fun deleteItem(uid: String, toDoTask: ToDoTask) {
+        firebaseDatabaseReference!!.child(ROOT)
+            .child(uid).child(toDoTask.id!!).removeValue()
     }
 
     fun getOptions() = options

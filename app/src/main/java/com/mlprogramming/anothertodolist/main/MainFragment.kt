@@ -120,6 +120,9 @@ class MainFragment : Fragment() {
                 mFirebaseAdapter?.let {
                     if (it.itemCount > 0) {
                         mainViewModel.onHandleIntent(UiIntent.StopLoading)
+                    }else{
+                        //TODO show an empty list message
+                        mainViewModel.onHandleIntent(UiIntent.StopLoading)
                     }
                 }
             }

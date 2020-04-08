@@ -15,4 +15,9 @@ class StorageManager @Inject constructor(private val onlineItemStorage: Firebase
     fun getFirebaseRecyclerOptions(): FirebaseRecyclerOptions<ToDoTask>? {
         return onlineItemStorage.getOptions()
     }
+
+    fun saveTask(uid: String, toDoTask: ToDoTask){
+        onlineItemStorage.saveItem(uid,toDoTask)
+    }
+
 }

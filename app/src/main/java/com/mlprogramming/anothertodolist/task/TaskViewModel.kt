@@ -6,6 +6,10 @@ import com.mlprogramming.anothertodolist.main.NavDirection
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.model.Utility
+import com.mlprogramming.anothertodolist.storage.StorageManager
+import com.mlprogramming.anothertodolist.storage.UserStorage
+import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(
     val navDirection: NavDirection? = null,
@@ -19,39 +23,43 @@ data class UiState(
 
 sealed class UiIntent {
     object ShowTask : UiIntent()
-    data class SetTitle(val title: String) : UiIntent()
-    data class SetDescription(val description: String) : UiIntent()
-    data class SetDueDate(val dueDate: String) : UiIntent()
-    data class SetPlace(val place: Place) : UiIntent()
-    object Save : UiIntent()
+    data class Save(
+        val title: String,
+        val description: String,
+        val dueDate: String
+    ) : UiIntent()
+
     object Cancel : UiIntent()
     object Loading : UiIntent()
-    object AddAlarm : UiIntent()
     object NavigationCompleted : UiIntent()
     object AddTask : UiIntent()
 }
 
 sealed class Command {
     object ShowTask : Command()
-    data class SetTitle(val title: String) : Command()
-    data class SetDescription(val description: String) : Command()
-    data class SetDueDate(val dueDate: String) : Command()
-    data class SetPlace(val place: Place) : Command()
-    object Save : Command()
+    data class Save(
+        val title: String,
+        val description: String,
+        val dueDate: String
+    ) : Command()
+
     object Cancel : Command()
     object Loading : Command()
-    object AddAlarm : Command()
     object NavigationCompleted : Command()
     object AddTask : Command()
 }
 
-class TaskViewModel(private val toDoTask: ToDoTask?) : ViewModel() {
+class TaskViewModel(
+    private val toDoTask: ToDoTask?,
+    private val storageManager: StorageManager,
+    private val userManager: UserManager
+) : ViewModel() {
 
     private val _task = MutableLiveData<ToDoTask>().apply {
         value = toDoTask
     }
 
-    val task: MutableLiveData<ToDoTask>
+    private val task: MutableLiveData<ToDoTask>
         get() = _task
 
     private val _uiState = MutableLiveData<UiState>().apply {
@@ -64,40 +72,28 @@ class TaskViewModel(private val toDoTask: ToDoTask?) : ViewModel() {
     fun onHandleIntent(intent: UiIntent) {
         return when (intent) {
             is UiIntent.ShowTask -> onCommand(Command.ShowTask)
-            UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
 
-            is UiIntent.AddTask -> onAddTask()
-            UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
+            is UiIntent.AddTask -> onCommand(Command.AddTask)
 
-            is UiIntent.Loading -> onLoading()
+            is UiIntent.Loading -> onCommand(Command.Loading)
 
-            is UiIntent.SetTitle -> TODO()
+            is UiIntent.Save -> onCommand(
+                Command.Save(
+                    intent.title,
+                    intent.description,
+                    intent.dueDate
+                )
+            )
 
-            is UiIntent.SetDescription -> TODO()
+            is UiIntent.Cancel -> onCommand(Command.Cancel)
 
-            is UiIntent.SetDueDate -> TODO()
-
-            is UiIntent.SetPlace -> TODO()
-
-            UiIntent.Save -> TODO()
-
-            UiIntent.Cancel -> TODO()
-
-            UiIntent.AddAlarm -> TODO()
+            is UiIntent.NavigationCompleted -> onCommand(Command.NavigationCompleted)
         }
     }
 
     private fun onCommand(command: Command) {
         val currentState = _uiState.value ?: return
         _uiState.value = reduce(currentState, command)
-    }
-
-    private fun onLoading() {
-        onCommand(Command.Loading)
-    }
-
-    private fun onAddTask() {
-        onCommand(Command.AddTask)
     }
 
     private fun reduce(state: UiState, command: Command): UiState {
@@ -113,6 +109,8 @@ class TaskViewModel(private val toDoTask: ToDoTask?) : ViewModel() {
                 )
             }
             is Command.AddTask -> {
+                task.value = ToDoTask(id = Utility.getRandomId())
+
                 state.copy(
                     navDirection = null,
                     taskTitle = null,
@@ -131,19 +129,19 @@ class TaskViewModel(private val toDoTask: ToDoTask?) : ViewModel() {
 
             is Command.NavigationCompleted -> state.copy(navDirection = null)
 
-            is Command.SetTitle -> TODO()
+            is Command.Save -> {
+                val toDoTask = task.value!!
+                toDoTask.title = command.title
+                toDoTask.description = command.description
+                toDoTask.date = command.dueDate
+                storageManager.saveTask(userManager.getUserId()!!, toDoTask)
+                state.copy(navDirection = NavDirection.ToMain())
+            }
 
-            is Command.SetDescription -> TODO()
+            is Command.Cancel -> {
+                state.copy(navDirection = NavDirection.ToMain())
+            }
 
-            is Command.SetDueDate -> TODO()
-
-            is Command.SetPlace -> TODO()
-
-            is Command.Save -> TODO()
-
-            is Command.Cancel -> TODO()
-
-            is Command.AddAlarm -> TODO()
         }
     }
 

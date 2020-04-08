@@ -60,6 +60,17 @@
             android:hint="@string/label_task_date" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/tasks_labels"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_date"
+        app:singleLine="false"
+        app:singleSelection="false" />
+
     <Button
         android:id="@+id/task_alarm"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
@@ -71,67 +82,52 @@
         app:icon="@drawable/ic_alarm_add"
         app:iconTint="@color/primaryTextColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/task_date" />
-
-    <TextView
-        android:id="@+id/task_alarm_text"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        tools:text="Alarm"
-        android:layout_margin="@dimen/default_margin"
-        app:layout_constraintStart_toEndOf="@+id/task_alarm"
-        app:layout_constraintTop_toBottomOf="@+id/task_date" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/tasks_labels"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/task_alarm"
-        app:singleLine="false"
-        app:singleSelection="false" />
+        app:layout_constraintTop_toBottomOf="@+id/tasks_labels" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/task_alarm_linear"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin"
-        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_alarm"/>
+
+    <Button
+        android:id="@+id/add_place"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:text="@string/add_place"
+        android:textColor="@color/primaryTextColor"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:layout_weight="1"
-            android:text="@string/add_place"
-            android:textColor="@color/primaryTextColor"
-            app:icon="@drawable/ic_add"
-            app:iconTint="@color/primaryTextColor" />
+    <Button
+        android:id="@+id/cancel"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:text="@string/cancel"
+        android:textColor="@color/primaryTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/save" />
 
-        <Button
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:layout_weight="1"
-            android:text="@string/cancel"
-            android:textColor="@color/primaryTextColor" />
-
-        <Button
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:layout_weight="1"
-            android:text="@string/save"
-            android:textColor="@color/primaryTextColor" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/save"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:text="@string/save"
+        android:textColor="@color/primaryTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"

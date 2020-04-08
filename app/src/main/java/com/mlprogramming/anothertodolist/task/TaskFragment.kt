@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -13,15 +14,17 @@ import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.Navigator
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
 
 class TaskFragment : Fragment() {
-    lateinit var taskViewModel: TaskViewModel
-    lateinit var navigator: Navigator
+    private lateinit var taskViewModel: TaskViewModel
+    private lateinit var navigator: Navigator
 
     private var task: ToDoTask? = null
     private lateinit var userManager: UserManager
+    private lateinit var storageManager: StorageManager
     private lateinit var inflater: LayoutInflater
 
     override fun onCreateView(
@@ -38,13 +41,16 @@ class TaskFragment : Fragment() {
         userManager =
             (activity!!.application as AnotherToDoListApplication).appComponent.userManager()
         userManager.userComponent!!.inject(this)
+        storageManager =
+            (activity!!.application as AnotherToDoListApplication).appComponent.storageManager()
 
         navigator = Navigator((activity as MainActivity).getNavController())
 
         task = arguments?.getSerializable(ToDoTask::class.java.simpleName) as ToDoTask?
 
         taskViewModel =
-            ViewModelProviders.of(this, TaskViewModelFactory(task)).get(TaskViewModel::class.java)
+            ViewModelProviders.of(this, TaskViewModelFactory(task, storageManager, userManager))
+                .get(TaskViewModel::class.java)
 
         if (task != null) {
             taskViewModel.onHandleIntent(UiIntent.Loading)
@@ -56,6 +62,15 @@ class TaskFragment : Fragment() {
     }
 
     private fun setupView() {
+        save.setOnClickListener {
+            taskViewModel.onHandleIntent(
+                UiIntent.Save(
+                    task_title.editText!!.text.toString(),
+                    task_description.editText!!.text.toString(),
+                    task_date.editText!!.text.toString()
+                )
+            )
+        }
 
     }
 
@@ -63,6 +78,7 @@ class TaskFragment : Fragment() {
         taskViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
                 navigator.navigate(it)
+                (activity as MainActivity).getNavController().navigateUp()
                 taskViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.loading?.let {

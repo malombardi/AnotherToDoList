@@ -46,12 +46,12 @@ class FirebaseItemStorage @Inject constructor(context: Context) : ItemStorage {
 
     override fun updateItem(uid: String, toDoTask: ToDoTask) {
         firebaseDatabaseReference!!.child(ROOT)
-            .child(uid).child(toDoTask.id!!).push().setValue(toDoTask)
+            .child(uid).child(toDoTask.id!!).setValue(toDoTask)
     }
 
     override fun deleteItem(uid: String, toDoTask: ToDoTask) {
         firebaseDatabaseReference!!.child(ROOT)
-            .child(uid).child(toDoTask.id!!).removeValue()
+            .child(uid).child(toDoTask.id!!).setValue(null)
     }
 
     fun getOptions() = options

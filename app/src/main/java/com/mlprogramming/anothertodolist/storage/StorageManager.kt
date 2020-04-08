@@ -16,8 +16,12 @@ class StorageManager @Inject constructor(private val onlineItemStorage: Firebase
         return onlineItemStorage.getOptions()
     }
 
-    fun saveTask(uid: String, toDoTask: ToDoTask){
-        onlineItemStorage.saveItem(uid,toDoTask)
+    fun saveTask(uid: String, toDoTask: ToDoTask) {
+        onlineItemStorage.saveItem(uid, toDoTask)
+    }
+
+    fun deleteTask(uid: String, toDoTask: ToDoTask) {
+        onlineItemStorage.deleteItem(uid, toDoTask)
     }
 
 }

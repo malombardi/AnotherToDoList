@@ -23,5 +23,6 @@
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".alarm.AlarmFragment" />
     </application>
 </manifest>

@@ -1,6 +1,6 @@
 package com.mlprogramming.anothertodolist.alarm
 
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 
-class AlarmFragment : Fragment() {
+class AlarmFragment : AppCompatActivity() {
 }

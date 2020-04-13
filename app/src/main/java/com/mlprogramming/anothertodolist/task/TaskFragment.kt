@@ -1,14 +1,13 @@
 package com.mlprogramming.anothertodolist.task
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.chip.Chip
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
@@ -17,6 +16,9 @@ import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class TaskFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
@@ -26,6 +28,8 @@ class TaskFragment : Fragment() {
     private lateinit var userManager: UserManager
     private lateinit var storageManager: StorageManager
     private lateinit var inflater: LayoutInflater
+
+    private val formatter = SimpleDateFormat("EEE, dd MMM yyyy", Locale.US)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,6 +77,36 @@ class TaskFragment : Fragment() {
         }
         cancel.setOnClickListener {
             taskViewModel.onHandleIntent(UiIntent.Cancel)
+        }
+
+        initDatePicker()
+    }
+
+    private fun initDatePicker() {
+        val cal = Calendar.getInstance()
+
+        task_date.editText!!.text.let {
+            if (!it.isNullOrBlank()) {
+                cal.time = formatter.parse(it.toString())!!
+            }
+        }
+
+        val dateSetListener =
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                taskViewModel.onHandleIntent(UiIntent.SetDueDate(formatter.format(cal.time)))
+            }
+
+        task_date.editText!!.setOnClickListener {
+            DatePickerDialog(
+                activity!!,
+                dateSetListener,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
     }
 

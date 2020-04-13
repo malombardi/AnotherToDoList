@@ -62,6 +62,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
             android:hint="@string/label_task_date"
             android:imeOptions="actionDone"
             android:inputType="textNoSuggestions"
@@ -95,7 +96,7 @@
             android:layout_alignTop="@id/task_alarm"
             android:layout_alignEnd="@id/task_alarm"
             android:padding="2dp"
-            android:text="9+"
+            android:visibility="gone"
             android:textColor="#FFF"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -128,7 +129,7 @@
             android:layout_alignTop="@id/add_place"
             android:layout_alignEnd="@id/add_place"
             android:padding="2dp"
-            android:text="9+"
+            android:visibility="gone"
             android:textColor="#FFF"
             android:textSize="16sp"
             android:textStyle="bold" />

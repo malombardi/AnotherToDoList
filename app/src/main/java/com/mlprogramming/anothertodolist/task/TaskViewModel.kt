@@ -21,13 +21,14 @@ data class UiState(
 )
 
 sealed class UiIntent {
-    object ShowTask : UiIntent()
     data class Save(
         val title: String,
         val description: String,
         val dueDate: String
     ) : UiIntent()
 
+    data class SetDueDate(val date: String) : UiIntent()
+    object ShowTask : UiIntent()
     object Cancel : UiIntent()
     object Loading : UiIntent()
     object NavigationCompleted : UiIntent()
@@ -35,13 +36,14 @@ sealed class UiIntent {
 }
 
 sealed class Command {
-    object ShowTask : Command()
+    data class SetDueDate(val date: String) : Command()
     data class Save(
         val title: String,
         val description: String,
         val dueDate: String
     ) : Command()
 
+    object ShowTask : Command()
     object Cancel : Command()
     object Loading : Command()
     object NavigationCompleted : Command()
@@ -83,6 +85,8 @@ class TaskViewModel(
                     intent.dueDate
                 )
             )
+
+            is UiIntent.SetDueDate -> onCommand(Command.SetDueDate(intent.date))
 
             is UiIntent.Cancel -> onCommand(Command.Cancel)
 
@@ -127,6 +131,12 @@ class TaskViewModel(
             }
 
             is Command.NavigationCompleted -> state.copy(navDirection = null)
+
+            is Command.SetDueDate -> {
+                state.copy(
+                    taskDate = command.date
+                )
+            }
 
             is Command.Save -> {
                 val toDoTask = task.value!!

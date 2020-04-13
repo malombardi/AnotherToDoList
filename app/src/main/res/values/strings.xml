@@ -11,4 +11,5 @@
     <string name="add_alarm">Add alarm</string>
     <string name="remove_alarm">Remove alarm</string>
     <string name="edit_alarm">Edit alarm</string>
+    <string name="empty_list">There\'re no taks to show</string>
 </resources>

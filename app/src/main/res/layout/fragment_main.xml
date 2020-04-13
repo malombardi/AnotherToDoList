@@ -13,17 +13,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/default_padding"
-        android:layout_margin="@dimen/default_margin"
         android:layout_gravity="bottom|end"
-        app:backgroundTint="@color/primaryDarkColor"
-        android:src="@drawable/ic_add" />
+        android:layout_margin="@dimen/default_margin"
+        android:padding="@dimen/default_padding"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/primaryDarkColor" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -31,4 +31,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/empty_list"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="22sp"
+        android:visibility="gone" />
 </FrameLayout>

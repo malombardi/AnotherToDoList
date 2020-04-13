@@ -61,9 +61,9 @@ class LoginActivity : AppCompatActivity(), OnCompleteListener<AuthResult>,
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == UserManager.RC_SIGN_IN) {
             val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
-            when (result.status) {
+            when (result?.status) {
                 Status.RESULT_SUCCESS -> {
-                    val account = result.signInAccount
+                    val account = result!!.signInAccount
                     loginViewModel.firebaseAuthWithGoogle(account!!, this)
                 }
                 else -> loginViewModel.onLoginFail()

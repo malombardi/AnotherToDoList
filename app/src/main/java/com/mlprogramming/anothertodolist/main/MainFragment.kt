@@ -24,6 +24,7 @@ import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_task.view.*
+import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
     lateinit var mainViewModel: MainViewModel
@@ -63,7 +64,8 @@ class MainFragment : Fragment() {
     }
 
     private fun setupView() {
-        deleteIcon = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.ic_remove)!!
+        deleteIcon =
+            ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.ic_remove)!!
         manager = LinearLayoutManager(activity).apply {
             reverseLayout = true
             stackFromEnd = true
@@ -82,7 +84,8 @@ class MainFragment : Fragment() {
 
     private fun enableSwipe() {
         val itemTouchHelperCallback =
-            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            object :
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
@@ -92,7 +95,13 @@ class MainFragment : Fragment() {
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
-                    mainViewModel.onHandleIntent(UiIntent.DeleteTask(mFirebaseAdapter!!.getItem(viewHolder.adapterPosition)))
+                    mainViewModel.onHandleIntent(
+                        UiIntent.DeleteTask(
+                            mFirebaseAdapter!!.getItem(
+                                viewHolder.adapterPosition
+                            )
+                        )
+                    )
                 }
 
                 override fun onChildDraw(
@@ -105,10 +114,16 @@ class MainFragment : Fragment() {
                     isCurrentlyActive: Boolean
                 ) {
                     val itemView = viewHolder.itemView
-                    val iconMarginVertical = (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
+                    val iconMarginVertical =
+                        (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
 
                     if (dX > 0) {
-                        colorDrawableBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
+                        colorDrawableBackground.setBounds(
+                            itemView.left,
+                            itemView.top,
+                            dX.toInt(),
+                            itemView.bottom
+                        )
                         deleteIcon.setBounds(
                             itemView.left + iconMarginVertical,
                             itemView.top + iconMarginVertical,
@@ -138,13 +153,26 @@ class MainFragment : Fragment() {
                     if (dX > 0)
                         c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
                     else
-                        c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                        c.clipRect(
+                            itemView.right + dX.toInt(),
+                            itemView.top,
+                            itemView.right,
+                            itemView.bottom
+                        )
 
                     deleteIcon.draw(c)
 
                     c.restore()
 
-                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
                 }
             }
 
@@ -214,9 +242,9 @@ class MainFragment : Fragment() {
                     true -> {
                         progressBar.visibility = View.VISIBLE
                         tasksRecyclerView.visibility = View.GONE
-                        val isRepoInitialized = mainViewModel.initRepository(storageManager)
+                        mainViewModel.initRepository(storageManager)
 
-                        if (isRepoInitialized) {
+                        if (mainViewModel.isRepoInitialized) {
                             mainViewModel.onHandleIntent(UiIntent.ShowAllTasks)
                         } else {
                             mainViewModel.onHandleIntent(UiIntent.Loading)
@@ -224,6 +252,16 @@ class MainFragment : Fragment() {
                     }
                     false -> {
                         progressBar.visibility = View.GONE
+                    }
+                }
+            }
+            state.emptyData?.let {
+                when (it) {
+                    true -> {
+                        empty_text.visibility = View.VISIBLE
+                    }
+                    false -> {
+                        empty_text.visibility = View.GONE
                     }
                 }
             }

@@ -7,10 +7,12 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
+import kotlinx.coroutines.*
 
 data class UiState(
     val navDirection: NavDirection? = null,
     val msgs: String? = null,
+    val emptyData: Boolean? = null,
     val loading: Boolean? = false,
     val grabbingOptions: Boolean,
     val options: FirebaseRecyclerOptions<ToDoTask>? = null
@@ -46,6 +48,10 @@ class MainViewModel : ViewModel() {
     private lateinit var userManager: UserManager
     private lateinit var storageManager: StorageManager
     private var options: FirebaseRecyclerOptions<ToDoTask>? = null
+    var isRepoInitialized = false
+
+    val scopeCoroutine: CoroutineScope
+        get() = CoroutineScope(Dispatchers.IO)
 
     private val _uiState = MutableLiveData<UiState>().apply {
         value = getInitialState()
@@ -58,14 +64,19 @@ class MainViewModel : ViewModel() {
         this.userManager = userManager
     }
 
-    fun initRepository(storageManager: StorageManager): Boolean {
-        userManager.getUserId()?.let {
-            this.storageManager = storageManager
-            storageManager.prepareAllItems(it)
-            options = storageManager.getFirebaseRecyclerOptions()
-            return true
+    fun initRepository(_storageManager: StorageManager) =
+        scopeCoroutine.launch {
+            doRepoInit(_storageManager)
         }
-        return false
+
+
+    private fun doRepoInit(_storageManager: StorageManager) {
+        if (userManager.getUserId() != null) {
+            storageManager = _storageManager
+            storageManager.prepareAllItems(userManager.getUserId()!!)
+            options = storageManager.getFirebaseRecyclerOptions()
+            isRepoInitialized = true
+        }
     }
 
     fun onHandleIntent(intent: UiIntent) {
@@ -114,6 +125,7 @@ class MainViewModel : ViewModel() {
             }
             is Command.AllTaskVisible -> {
                 state.copy(
+                    emptyData = false,
                     loading = false,
                     grabbingOptions = true
                 )
@@ -139,8 +151,8 @@ class MainViewModel : ViewModel() {
                 )
             }
             is Command.ShowEmpty -> {
-                //TODO add state of empty
                 state.copy(
+                    emptyData = true,
                     loading = false,
                     grabbingOptions = true
                 )
@@ -161,6 +173,7 @@ class MainViewModel : ViewModel() {
         msgs = null,
         loading = null,
         options = null,
+        emptyData = null,
         grabbingOptions = false
     )
 

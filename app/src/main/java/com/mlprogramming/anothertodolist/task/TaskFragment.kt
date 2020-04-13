@@ -71,7 +71,9 @@ class TaskFragment : Fragment() {
                 )
             )
         }
-
+        cancel.setOnClickListener {
+            taskViewModel.onHandleIntent(UiIntent.Cancel)
+        }
     }
 
     private fun setupStateObserver() {
@@ -101,15 +103,20 @@ class TaskFragment : Fragment() {
                 task_date.editText?.setText(it)
             }
             state.taskPlaces?.let {
-                for (place in it) {
-                    val chip =
-                        inflater.inflate(R.layout.task_place_choice, tasks_labels, true) as Chip
-                    chip.text = place.name
-                    tasks_labels.addView(chip)
+                if (it.isEmpty()) {
+                    place_count.visibility = View.GONE
+                } else {
+                    place_count.visibility = View.VISIBLE
+                    place_count.setText(it.size)
                 }
             }
             state.taskAlarm?.let {
-                TODO()
+                if (it.isEmpty()) {
+                    alarm_count.visibility = View.GONE
+                } else {
+                    alarm_count.visibility = View.VISIBLE
+                    alarm_count.setText(it.size)
+                }
             }
         })
     }

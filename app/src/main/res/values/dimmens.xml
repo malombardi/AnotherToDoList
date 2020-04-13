@@ -4,6 +4,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="chip_corner_radius">16dp</dimen>
+    <dimen name="min_padding">8dp</dimen>
     <dimen name="default_padding">16dp</dimen>
     <dimen name="default_margin">16dp</dimen>
     <dimen name="default_min_height">48dp</dimen>

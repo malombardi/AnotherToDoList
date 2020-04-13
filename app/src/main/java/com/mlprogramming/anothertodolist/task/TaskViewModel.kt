@@ -8,7 +8,6 @@ import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.model.Utility
 import com.mlprogramming.anothertodolist.storage.StorageManager
-import com.mlprogramming.anothertodolist.storage.UserStorage
 import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(

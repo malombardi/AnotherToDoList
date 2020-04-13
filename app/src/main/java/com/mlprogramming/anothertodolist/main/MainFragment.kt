@@ -24,7 +24,6 @@ import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_task.view.*
-import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
     lateinit var mainViewModel: MainViewModel
@@ -192,7 +191,6 @@ class MainFragment : Fragment() {
             }
             state.options?.let {
                 if (!state.grabbingOptions) {
-
                     tasksRecyclerView.visibility = View.VISIBLE
                     progressBar.visibility = View.VISIBLE
 
@@ -205,7 +203,6 @@ class MainFragment : Fragment() {
                                 val viewHolder = LayoutInflater.from(parent.context).inflate(
                                     R.layout.item_task, parent, false
                                 )
-
                                 return TaskViewHolder(viewHolder)
                             }
 
@@ -214,6 +211,9 @@ class MainFragment : Fragment() {
                                 position: Int,
                                 model: ToDoTask
                             ) {
+                                holder.itemView.setOnClickListener {
+                                    mainViewModel.onHandleIntent(UiIntent.ProceedToTask(model))
+                                }
                                 holder.bindTask(model)
                             }
                         }
@@ -228,12 +228,11 @@ class MainFragment : Fragment() {
                             mainViewModel.onHandleIntent(UiIntent.AllTaskVisible)
                         }
                     })
-                    mFirebaseAdapter?.let {
-                        if (it.itemCount > 0) {
-                            mainViewModel.onHandleIntent(UiIntent.AllTaskVisible)
-                        } else {
-                            mainViewModel.onHandleIntent(UiIntent.ShowEmpty)
-                        }
+
+                    if (mFirebaseAdapter!!.itemCount > 0) {
+                        mainViewModel.onHandleIntent(UiIntent.AllTaskVisible)
+                    } else {
+                        mainViewModel.onHandleIntent(UiIntent.ShowEmpty)
                     }
                 }
             }
@@ -285,6 +284,10 @@ class MainFragment : Fragment() {
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindTask(task: ToDoTask) {
             itemView.title.text = task.title
+            itemView.alarm_count.visibility =
+                if (task.alarms.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemView.place_count.visibility =
+                if (task.places.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
     }
 }

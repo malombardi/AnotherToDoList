@@ -29,7 +29,6 @@ sealed class UiIntent {
     object ShowAllTasks : UiIntent()
     object ToastShown : UiIntent()
     object AddTask : UiIntent()
-
 }
 
 sealed class Command {
@@ -68,7 +67,6 @@ class MainViewModel : ViewModel() {
         scopeCoroutine.launch {
             doRepoInit(_storageManager)
         }
-
 
     private fun doRepoInit(_storageManager: StorageManager) {
         if (userManager.getUserId() != null) {
@@ -154,7 +152,8 @@ class MainViewModel : ViewModel() {
                 state.copy(
                     emptyData = true,
                     loading = false,
-                    grabbingOptions = true
+                    grabbingOptions = true,
+                    options = null
                 )
             }
 

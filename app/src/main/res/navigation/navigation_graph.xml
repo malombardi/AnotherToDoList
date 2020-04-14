@@ -18,6 +18,11 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@+id/mainFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -31,7 +36,7 @@
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
             app:popUpTo="@+id/mainFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_taskFragment_to_alarmFragment"
             app:destination="@id/alarmFragment"

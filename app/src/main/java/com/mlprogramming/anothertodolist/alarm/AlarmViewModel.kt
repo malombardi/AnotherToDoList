@@ -39,15 +39,7 @@ sealed class Command {
 
 class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
 
-    private val task = MutableLiveData<ToDoTask>().apply {
-        value = toDoTask
-    }
-
-    private val _alarms = MutableLiveData<ArrayList<Alarm>>().apply {
-        value = toDoTask.alarms
-    }
-
-    var alarms: MutableLiveData<ArrayList<Alarm>>? = _alarms
+    var alarms = MutableLiveData<ArrayList<Alarm>>(toDoTask.alarms)
 
     private val _uiState = MutableLiveData<UiState>().apply {
         value = getInitialState()
@@ -85,19 +77,19 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
         return when (command) {
 
             is Command.RemoveAlarm -> {
-                alarms!!.value!!.remove(command.alarm)
+                alarms.value!!.remove(command.alarm)
                 state.copy(
-                    alarms = alarms!!
+                    alarms = alarms
                 )
             }
 
             is Command.AddAlarm -> {
-                if (alarms!!.value == null) {
-                    alarms!!.value = ArrayList<Alarm>()
+                if (alarms.value == null) {
+                    alarms.value = ArrayList<Alarm>()
                 }
-                alarms!!.value!!.add(command.alarm)
+                alarms.value!!.add(command.alarm)
                 state.copy(
-                    alarms = alarms!!
+                    alarms = alarms
                 )
             }
 
@@ -120,10 +112,10 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
             }
 
             is Command.SaveAlarms -> {
-                task.value!!.alarms = alarms!!.value
+                toDoTask.alarms = alarms.value
 
                 val args = Bundle().apply {
-                    task.value!!.let {
+                    toDoTask.let {
                         this.putSerializable(
                             ToDoTask::class.java.simpleName,
                             it
@@ -138,7 +130,7 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
 
             is Command.Cancel -> {
                 val args = Bundle().apply {
-                    task.value!!.let {
+                    toDoTask.let {
                         this.putSerializable(
                             ToDoTask::class.java.simpleName,
                             it

@@ -27,15 +27,42 @@
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.mlprogramming.anothertodolist.task.TaskFragment"
-        android:label="TaskFragment" />
+        android:label="TaskFragment">
+        <action
+            android:id="@+id/action_taskFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@+id/mainFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/alarmFragment"
         android:name="com.mlprogramming.anothertodolist.alarm.AlarmFragment"
-        android:label="AlarmFragment" />
+        android:label="AlarmFragment">
+        <action
+            android:id="@+id/action_alarmFragment_to_taskFragment"
+            app:destination="@id/alarmFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@+id/alarmFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/placeFragment"
         android:name="com.mlprogramming.anothertodolist.place.PlaceFragment"
-        android:label="PlaceFragment" />
+        android:label="PlaceFragment">
+        <action
+            android:id="@+id/action_placeFragment_to_taskFragment"
+            app:destination="@id/alarmFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@+id/alarmFragment" />
+    </fragment>
 </navigation>

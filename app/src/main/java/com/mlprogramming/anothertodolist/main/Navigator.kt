@@ -7,11 +7,7 @@ import javax.inject.Inject
 
 class Navigator(private val navController: NavController) {
     fun navigate(navDirection: NavDirection) {
-        if (navDirection.direction == R.id.mainFragment) {
-            navController.navigateUp()
-        } else {
-            navController.navigate(navDirection.direction, navDirection.args)
-        }
+        navController.navigate(navDirection.direction, navDirection.args)
     }
 }
 

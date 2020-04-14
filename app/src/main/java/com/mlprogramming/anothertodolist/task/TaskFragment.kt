@@ -129,11 +129,7 @@ class TaskFragment : Fragment() {
     private fun setupStateObserver() {
         taskViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
-                when (it) {
-                    is NavDirection.ToMain -> (activity as MainActivity).getNavController().navigateUp()
-                    else -> navigator.navigate(it)
-                }
-
+                navigator.navigate(it)
                 taskViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.loading?.let {

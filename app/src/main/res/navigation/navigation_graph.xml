@@ -37,14 +37,6 @@
             app:popExitAnim="@anim/fragment_fade_enter"
             app:popUpTo="@id/mainFragment" />
         <action
-            android:id="@+id/action_taskFragment_to_alarmFragment"
-            app:destination="@id/alarmFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit"
-            app:popEnterAnim="@anim/fragment_fade_enter"
-            app:popExitAnim="@anim/fragment_fade_exit"
-            app:popUpTo="@+id/taskFragment" />
-        <action
             android:id="@+id/action_taskFragment_to_placeFragment"
             app:destination="@id/placeFragment"
             app:enterAnim="@anim/fragment_fade_enter"
@@ -52,6 +44,19 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@+id/taskFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -65,6 +70,11 @@
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
             app:popUpTo="@+id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -78,5 +88,10 @@
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
             app:popUpTo="@+id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
     </fragment>
 </navigation>

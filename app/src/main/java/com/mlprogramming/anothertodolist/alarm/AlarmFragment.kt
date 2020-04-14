@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mlprogramming.anothertodolist.R
@@ -49,7 +50,10 @@ class AlarmFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         navigator = Navigator((activity as MainActivity).getNavController())
-        task = arguments?.getSerializable(ToDoTask::class.java.simpleName) as ToDoTask
+
+        arguments?.let{
+            task = AlarmFragmentArgs.fromBundle(it).task!!
+        }
 
         alarmViewModel =
             ViewModelProviders.of(this, AlarmViewModelFactory(task))
@@ -66,7 +70,7 @@ class AlarmFragment : Fragment() {
     private fun setupStateObserver() {
         alarmViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
-                navigator.navigate(it)
+                navigator.navigate(it as NavDirections)
                 alarmViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.alarms?.let {

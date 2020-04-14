@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -91,7 +92,7 @@ class MainFragment : Fragment() {
     private fun setupStateObserver() {
         mainViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
-                navigator.navigate(it)
+                navigator.navigate(it as NavDirections)
                 mainViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.msgs?.let {

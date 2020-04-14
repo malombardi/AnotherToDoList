@@ -3,7 +3,6 @@ package com.mlprogramming.anothertodolist.task
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mlprogramming.anothertodolist.main.NavDirection
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
@@ -12,7 +11,7 @@ import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 
 data class UiState(
-    val navDirection: NavDirection? = null,
+    val navDirection: Any? = null,
     val taskTitle: String? = null,
     val taskDescription: String? = null,
     val taskPlaces: List<Place>? = null,
@@ -163,11 +162,15 @@ class TaskViewModel(
                 toDoTask.alarms = command.alarms
                 toDoTask.places = command.places
                 storageManager.saveTask(userManager.getUserId()!!, toDoTask)
-                state.copy(navDirection = NavDirection.ToMain())
+                val fragmentDirections =
+                    TaskFragmentDirections.actionTaskFragmentToMainFragment()
+                state.copy(navDirection = fragmentDirections)
             }
 
             is Command.Cancel -> {
-                state.copy(navDirection = NavDirection.ToMain())
+                val fragmentDirections =
+                    TaskFragmentDirections.actionTaskFragmentToMainFragment()
+                state.copy(navDirection = fragmentDirections)
             }
 
             is Command.AddAlarm -> {
@@ -175,17 +178,12 @@ class TaskViewModel(
                     TODO("Log error and throw exception")
 
                 } else {
-                    val args = Bundle().apply {
-                        task.value.let {
-                            this.putSerializable(
-                                ToDoTask::class.java.simpleName,
-                                task.value
-                            )
-                        }
-                    }
+                    val fragmentDirections =
+                        TaskFragmentDirections.actionTaskFragmentToAlarmFragment()
+                    fragmentDirections.task = task.value
 
                     state.copy(
-                        navDirection = NavDirection.ToAlarm(args),
+                        navDirection = fragmentDirections,
                         loading = true
                     )
                 }
@@ -196,17 +194,12 @@ class TaskViewModel(
                     TODO("Log error and throw exception")
 
                 } else {
-                    val args = Bundle().apply {
-                        task.value.let {
-                            this.putSerializable(
-                                ToDoTask::class.java.simpleName,
-                                task.value
-                            )
-                        }
-                    }
+                    val fragmentDirections =
+                        TaskFragmentDirections.actionTaskFragmentToPlaceFragment()
+                    fragmentDirections.task = task.value
 
                     state.copy(
-                        navDirection = NavDirection.ToPlace(args),
+                        navDirection = fragmentDirections,
                         loading = true
                     )
                 }

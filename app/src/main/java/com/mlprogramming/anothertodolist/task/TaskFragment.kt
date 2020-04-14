@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavDirections
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
-import com.mlprogramming.anothertodolist.main.NavDirection
 import com.mlprogramming.anothertodolist.main.Navigator
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
@@ -21,7 +21,6 @@ import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class TaskFragment : Fragment() {
@@ -56,7 +55,9 @@ class TaskFragment : Fragment() {
 
         navigator = Navigator((activity as MainActivity).getNavController())
 
-        task = arguments?.getSerializable(ToDoTask::class.java.simpleName) as ToDoTask?
+        arguments?.let{
+            task = TaskFragmentArgs.fromBundle(it).task
+        }
 
         taskViewModel =
             ViewModelProviders.of(this, TaskViewModelFactory(task, storageManager, userManager))
@@ -129,7 +130,7 @@ class TaskFragment : Fragment() {
     private fun setupStateObserver() {
         taskViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
-                navigator.navigate(it)
+                navigator.navigate(it as NavDirections)
                 taskViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.loading?.let {

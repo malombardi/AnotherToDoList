@@ -3,12 +3,11 @@ package com.mlprogramming.anothertodolist.alarm
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mlprogramming.anothertodolist.main.NavDirection
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.ToDoTask
 
 data class UiState(
-    val navDirection: NavDirection? = null,
+    val navDirection: Any? = null,
     val alarms: MutableLiveData<ArrayList<Alarm>>? = null,
     val alarmDate: String? = null,
     val alarmTime: String? = null,
@@ -114,31 +113,21 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
             is Command.SaveAlarms -> {
                 toDoTask.alarms = alarms.value
 
-                val args = Bundle().apply {
-                    toDoTask.let {
-                        this.putSerializable(
-                            ToDoTask::class.java.simpleName,
-                            it
-                        )
-                    }
-                }
+                val fragmentDirections =
+                    AlarmFragmentDirections.actionAlarmFragmentToTaskFragment()
+
                 state.copy(
-                    navDirection = NavDirection.FromAlarmToTask(args),
+                    navDirection = fragmentDirections,
                     loading = true
                 )
             }
 
             is Command.Cancel -> {
-                val args = Bundle().apply {
-                    toDoTask.let {
-                        this.putSerializable(
-                            ToDoTask::class.java.simpleName,
-                            it
-                        )
-                    }
-                }
+                val fragmentDirections =
+                    AlarmFragmentDirections.actionAlarmFragmentToTaskFragment()
+
                 state.copy(
-                    navDirection = NavDirection.FromAlarmToTask(args),
+                    navDirection = fragmentDirections,
                     loading = true
                 )
             }

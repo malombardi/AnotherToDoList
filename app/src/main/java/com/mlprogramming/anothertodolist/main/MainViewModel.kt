@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.main
 
-import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -10,7 +9,7 @@ import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.coroutines.*
 
 data class UiState(
-    val navDirection: NavDirection? = null,
+    val navDirection: Any? = null,
     val msgs: String? = null,
     val emptyData: Boolean? = null,
     val loading: Boolean? = false,
@@ -100,16 +99,10 @@ class MainViewModel : ViewModel() {
     private fun reduce(state: UiState, command: Command): UiState {
         return when (command) {
             is Command.ProceedToTask -> {
-                val args = Bundle().apply {
-                    command.task.let {
-                        this.putSerializable(
-                            ToDoTask::class.java.simpleName,
-                            command.task
-                        )
-                    }
-                }
+                val fragmentDirections = MainFragmentDirections.actionMainFragmentToTaskFragment()
+                fragmentDirections.task = command.task
                 state.copy(
-                    navDirection = NavDirection.ToTask(args),
+                    navDirection = fragmentDirections,
                     loading = true
                 )
 

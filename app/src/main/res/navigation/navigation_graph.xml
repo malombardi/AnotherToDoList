@@ -35,8 +35,7 @@
             app:exitAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
-            app:popUpTo="@+id/mainFragment"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@id/mainFragment" />
         <action
             android:id="@+id/action_taskFragment_to_alarmFragment"
             app:destination="@id/alarmFragment"

@@ -39,7 +39,7 @@ sealed class Command {
 
 class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
 
-    var alarms = MutableLiveData<ArrayList<Alarm>>(toDoTask.alarms)
+    var alarms = MutableLiveData<ArrayList<Alarm>>(toDoTask.alarms?.clone() as ArrayList<Alarm>?)
 
     private val _uiState = MutableLiveData<UiState>().apply {
         value = getInitialState()

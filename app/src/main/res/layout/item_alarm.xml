@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/min_margin"
+    android:background="@android:color/white"
+    android:minHeight="@dimen/default_min_height"
+    android:paddingBottom="@dimen/default_padding"
+    android:paddingTop="@dimen/default_padding"
+    app:cardCornerRadius="@dimen/default_radius">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:textAlignment="textStart"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"/>
+
+</androidx.cardview.widget.CardView>

@@ -1,4 +1,6 @@
 package com.mlprogramming.anothertodolist.place
 
-class PlaceFragment {
+import androidx.fragment.app.Fragment
+
+class PlaceFragment: Fragment() {
 }

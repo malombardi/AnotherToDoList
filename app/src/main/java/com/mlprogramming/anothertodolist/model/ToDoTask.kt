@@ -13,7 +13,7 @@ data class Place(
 )
 
 data class Alarm(
-    val time: String
+    val time: Long
 )
 
 data class ToDoTask(

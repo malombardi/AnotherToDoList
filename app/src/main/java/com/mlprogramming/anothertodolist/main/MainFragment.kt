@@ -1,19 +1,14 @@
 package com.mlprogramming.anothertodolist.main
 
-import android.graphics.Canvas
-import android.graphics.Color.parseColor
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -22,6 +17,8 @@ import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
+import com.mlprogramming.anothertodolist.utils.TouchHelperSwipe
+import com.mlprogramming.anothertodolist.utils.UiUtils
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.item_task.view.*
 
@@ -35,7 +32,6 @@ class MainFragment : Fragment() {
     private lateinit var userManager: UserManager
     private lateinit var storageManager: StorageManager
     private lateinit var deleteIcon: Drawable
-    private var colorDrawableBackground = ColorDrawable(parseColor("#f7f7f7"))
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,14 +53,13 @@ class MainFragment : Fragment() {
         navigator = Navigator((activity as MainActivity).getNavController())
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         mainViewModel.setUserManager(userManager)
-
+        deleteIcon = UiUtils.getDeleteIcon(activity!!.applicationContext)
         setupView()
         setupStateObserver()
     }
 
     private fun setupView() {
-        deleteIcon =
-            ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.ic_remove)!!
+
         manager = LinearLayoutManager(activity).apply {
             reverseLayout = true
             stackFromEnd = true
@@ -82,101 +77,15 @@ class MainFragment : Fragment() {
     }
 
     private fun enableSwipe() {
-        val itemTouchHelperCallback =
-            object :
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    viewHolder2: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
-                    mainViewModel.onHandleIntent(
-                        UiIntent.DeleteTask(
-                            mFirebaseAdapter!!.getItem(
-                                viewHolder.adapterPosition
-                            )
-                        )
+        UiUtils.getItemTouchHelper(deleteIcon, object : TouchHelperSwipe {
+            override fun onSwipe(position: Int) {
+                mainViewModel.onHandleIntent(
+                    UiIntent.DeleteTask(
+                        mFirebaseAdapter!!.getItem(position)
                     )
-                }
-
-                override fun onChildDraw(
-                    c: Canvas,
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    dX: Float,
-                    dY: Float,
-                    actionState: Int,
-                    isCurrentlyActive: Boolean
-                ) {
-                    val itemView = viewHolder.itemView
-                    val iconMarginVertical =
-                        (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
-
-                    if (dX > 0) {
-                        colorDrawableBackground.setBounds(
-                            itemView.left,
-                            itemView.top,
-                            dX.toInt(),
-                            itemView.bottom
-                        )
-                        deleteIcon.setBounds(
-                            itemView.left + iconMarginVertical,
-                            itemView.top + iconMarginVertical,
-                            itemView.left + iconMarginVertical + deleteIcon.intrinsicWidth,
-                            itemView.bottom - iconMarginVertical
-                        )
-                    } else {
-                        colorDrawableBackground.setBounds(
-                            itemView.right + dX.toInt(),
-                            itemView.top,
-                            itemView.right,
-                            itemView.bottom
-                        )
-                        deleteIcon.setBounds(
-                            itemView.right - iconMarginVertical - deleteIcon.intrinsicWidth,
-                            itemView.top + iconMarginVertical,
-                            itemView.right - iconMarginVertical,
-                            itemView.bottom - iconMarginVertical
-                        )
-                        deleteIcon.level = 0
-                    }
-
-                    colorDrawableBackground.draw(c)
-
-                    c.save()
-
-                    if (dX > 0)
-                        c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
-                    else
-                        c.clipRect(
-                            itemView.right + dX.toInt(),
-                            itemView.top,
-                            itemView.right,
-                            itemView.bottom
-                        )
-
-                    deleteIcon.draw(c)
-
-                    c.restore()
-
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                }
+                )
             }
-
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(tasksRecyclerView)
+        }).attachToRecyclerView(tasksRecyclerView)
     }
 
     private fun setupStateObserver() {

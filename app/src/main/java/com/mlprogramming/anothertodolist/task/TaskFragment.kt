@@ -11,13 +11,17 @@ import androidx.lifecycle.ViewModelProviders
 import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
+import com.mlprogramming.anothertodolist.main.NavDirection
 import com.mlprogramming.anothertodolist.main.Navigator
+import com.mlprogramming.anothertodolist.model.Alarm
+import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class TaskFragment : Fragment() {
@@ -25,6 +29,8 @@ class TaskFragment : Fragment() {
     private lateinit var navigator: Navigator
 
     private var task: ToDoTask? = null
+    private var alarms: ArrayList<Alarm>? = null
+    private var places: ArrayList<Place>? = null
     private lateinit var userManager: UserManager
     private lateinit var storageManager: StorageManager
     private lateinit var inflater: LayoutInflater
@@ -71,12 +77,22 @@ class TaskFragment : Fragment() {
                 UiIntent.Save(
                     task_title.editText!!.text.toString(),
                     task_description.editText!!.text.toString(),
-                    task_date.editText!!.text.toString()
+                    task_date.editText!!.text.toString(),
+                    alarms,
+                    places
                 )
             )
         }
         cancel.setOnClickListener {
             taskViewModel.onHandleIntent(UiIntent.Cancel)
+        }
+
+        add_alarm.setOnClickListener {
+            taskViewModel.onHandleIntent(UiIntent.AddAlarm)
+        }
+
+        add_place.setOnClickListener {
+            taskViewModel.onHandleIntent(UiIntent.AddPlace)
         }
 
         initDatePicker()
@@ -92,7 +108,7 @@ class TaskFragment : Fragment() {
         }
 
         val dateSetListener =
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, monthOfYear)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -113,8 +129,11 @@ class TaskFragment : Fragment() {
     private fun setupStateObserver() {
         taskViewModel.uiState.observe(this, Observer { state ->
             state.navDirection?.let {
-                navigator.navigate(it)
-                (activity as MainActivity).getNavController().navigateUp()
+                when (it) {
+                    is NavDirection.ToMain -> (activity as MainActivity).getNavController().navigateUp()
+                    else -> navigator.navigate(it)
+                }
+
                 taskViewModel.onHandleIntent(UiIntent.NavigationCompleted)
             }
             state.loading?.let {
@@ -149,7 +168,7 @@ class TaskFragment : Fragment() {
                     alarm_count.visibility = View.GONE
                 } else {
                     alarm_count.visibility = View.VISIBLE
-                    alarm_count.setText(it.size)
+                    alarm_count.text = it.size.toString()
                 }
             }
         })

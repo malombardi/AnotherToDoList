@@ -1,5 +1,6 @@
 package com.mlprogramming.anothertodolist.task
 
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mlprogramming.anothertodolist.main.NavDirection
@@ -24,10 +25,14 @@ sealed class UiIntent {
     data class Save(
         val title: String,
         val description: String,
-        val dueDate: String
+        val dueDate: String,
+        val alarms: ArrayList<Alarm>?,
+        val places: ArrayList<Place>?
     ) : UiIntent()
 
     data class SetDueDate(val date: String) : UiIntent()
+    object AddAlarm : UiIntent()
+    object AddPlace : UiIntent()
     object ShowTask : UiIntent()
     object Cancel : UiIntent()
     object Loading : UiIntent()
@@ -40,9 +45,13 @@ sealed class Command {
     data class Save(
         val title: String,
         val description: String,
-        val dueDate: String
+        val dueDate: String,
+        val alarms: ArrayList<Alarm>?,
+        val places: ArrayList<Place>?
     ) : Command()
 
+    object AddAlarm : Command()
+    object AddPlace : Command()
     object ShowTask : Command()
     object Cancel : Command()
     object Loading : Command()
@@ -76,13 +85,19 @@ class TaskViewModel(
 
             is UiIntent.AddTask -> onCommand(Command.AddTask)
 
+            is UiIntent.AddAlarm -> onCommand(Command.AddAlarm)
+
+            is UiIntent.AddPlace -> onCommand(Command.AddPlace)
+
             is UiIntent.Loading -> onCommand(Command.Loading)
 
             is UiIntent.Save -> onCommand(
                 Command.Save(
                     intent.title,
                     intent.description,
-                    intent.dueDate
+                    intent.dueDate,
+                    intent.alarms,
+                    intent.places
                 )
             )
 
@@ -111,6 +126,7 @@ class TaskViewModel(
                     loading = false
                 )
             }
+
             is Command.AddTask -> {
                 task.value = ToDoTask(id = Utility.getRandomId())
 
@@ -124,6 +140,7 @@ class TaskViewModel(
                     loading = false
                 )
             }
+
             is Command.Loading -> {
                 state.copy(
                     loading = true
@@ -143,6 +160,8 @@ class TaskViewModel(
                 toDoTask.title = command.title
                 toDoTask.description = command.description
                 toDoTask.date = command.dueDate
+                toDoTask.alarms = command.alarms
+                toDoTask.places = command.places
                 storageManager.saveTask(userManager.getUserId()!!, toDoTask)
                 state.copy(navDirection = NavDirection.ToMain())
             }
@@ -151,6 +170,47 @@ class TaskViewModel(
                 state.copy(navDirection = NavDirection.ToMain())
             }
 
+            is Command.AddAlarm -> {
+                if (task.value == null) {
+                    TODO("Log error and throw exception")
+
+                } else {
+                    val args = Bundle().apply {
+                        task.value.let {
+                            this.putSerializable(
+                                ToDoTask::class.java.simpleName,
+                                task.value
+                            )
+                        }
+                    }
+
+                    state.copy(
+                        navDirection = NavDirection.ToAlarm(args),
+                        loading = true
+                    )
+                }
+            }
+
+            is Command.AddPlace -> {
+                if (task.value == null) {
+                    TODO("Log error and throw exception")
+
+                } else {
+                    val args = Bundle().apply {
+                        task.value.let {
+                            this.putSerializable(
+                                ToDoTask::class.java.simpleName,
+                                task.value
+                            )
+                        }
+                    }
+
+                    state.copy(
+                        navDirection = NavDirection.ToPlace(args),
+                        loading = true
+                    )
+                }
+            }
         }
     }
 

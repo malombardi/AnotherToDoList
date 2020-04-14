@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/task_date">
 
         <Button
-            android:id="@+id/task_alarm"
+            android:id="@+id/add_alarm"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,8 +93,8 @@
             android:background="@drawable/badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/task_alarm"
-            android:layout_alignEnd="@id/task_alarm"
+            android:layout_alignTop="@id/add_alarm"
+            android:layout_alignEnd="@id/add_alarm"
             android:padding="2dp"
             android:visibility="gone"
             android:textColor="#FFF"

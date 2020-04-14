@@ -174,7 +174,7 @@ class AlarmFragment : Fragment() {
 
         fun bindAlarm(alarm: Alarm) {
             val cal = Calendar.getInstance()
-            cal.time.time = alarm.time
+            cal.timeInMillis = alarm.time!!
             itemView.time.text = dateTimeFormatter.format(cal.time)
         }
     }

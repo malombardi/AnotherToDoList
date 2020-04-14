@@ -78,9 +78,7 @@ class TaskFragment : Fragment() {
                 UiIntent.Save(
                     task_title.editText!!.text.toString(),
                     task_description.editText!!.text.toString(),
-                    task_date.editText!!.text.toString(),
-                    alarms,
-                    places
+                    task_date.editText!!.text.toString()
                 )
             )
         }

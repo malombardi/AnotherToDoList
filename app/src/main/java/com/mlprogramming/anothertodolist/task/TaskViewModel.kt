@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.task
 
-import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
@@ -24,9 +23,7 @@ sealed class UiIntent {
     data class Save(
         val title: String,
         val description: String,
-        val dueDate: String,
-        val alarms: ArrayList<Alarm>?,
-        val places: ArrayList<Place>?
+        val dueDate: String
     ) : UiIntent()
 
     data class SetDueDate(val date: String) : UiIntent()
@@ -44,9 +41,7 @@ sealed class Command {
     data class Save(
         val title: String,
         val description: String,
-        val dueDate: String,
-        val alarms: ArrayList<Alarm>?,
-        val places: ArrayList<Place>?
+        val dueDate: String
     ) : Command()
 
     object AddAlarm : Command()
@@ -65,7 +60,7 @@ class TaskViewModel(
 ) : ViewModel() {
 
     private val _task = MutableLiveData<ToDoTask>().apply {
-        value = toDoTask
+        value = toDoTask?.copy()
     }
 
     private val task: MutableLiveData<ToDoTask>
@@ -94,9 +89,7 @@ class TaskViewModel(
                 Command.Save(
                     intent.title,
                     intent.description,
-                    intent.dueDate,
-                    intent.alarms,
-                    intent.places
+                    intent.dueDate
                 )
             )
 
@@ -159,8 +152,8 @@ class TaskViewModel(
                 toDoTask.title = command.title
                 toDoTask.description = command.description
                 toDoTask.date = command.dueDate
-                toDoTask.alarms = command.alarms
-                toDoTask.places = command.places
+                toDoTask.alarms = task.value!!.alarms
+                toDoTask.places = task.value!!.places
                 storageManager.saveTask(userManager.getUserId()!!, toDoTask)
                 val fragmentDirections =
                     TaskFragmentDirections.actionTaskFragmentToMainFragment()

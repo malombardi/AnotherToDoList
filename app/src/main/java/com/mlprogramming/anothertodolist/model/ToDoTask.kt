@@ -7,13 +7,13 @@ enum class Status {
 }
 
 data class Place(
-    val latitude: Long,
-    val longitude: Long,
-    val name: String
+    var latitude: Long? = null,
+    var longitude: Long? = null,
+    var name: String? = null
 )
 
 data class Alarm(
-    val time: Long
+    var time: Long? = null
 )
 
 data class ToDoTask(

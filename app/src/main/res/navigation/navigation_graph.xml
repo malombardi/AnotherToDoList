@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.mlprogramming.anothertodolist.main.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_taskFragment"
+            app:destination="@id/taskFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@+id/mainFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.mlprogramming.anothertodolist.task.TaskFragment"
+        android:label="TaskFragment">
+        <action
+            android:id="@+id/action_taskFragment_to_mainFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@id/mainFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_placeFragment"
+            app:destination="@id/placeFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@+id/taskFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.mlprogramming.anothertodolist.alarm.AlarmFragment"
+        android:label="AlarmFragment">
+        <action
+            android:id="@+id/action_alarmFragment_to_taskFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@+id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/placeFragment"
+        android:name="com.mlprogramming.anothertodolist.place.PlaceFragment"
+        android:label="PlaceFragment">
+        <action
+            android:id="@+id/action_placeFragment_to_taskFragment"
+            app:enterAnim="@anim/fragment_fade_exit"
+            app:exitAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@+id/taskFragment" />
+        <argument
+            android:name="task"
+            android:defaultValue="@null"
+            app:argType="com.mlprogramming.anothertodolist.model.ToDoTask"
+            app:nullable="true" />
+    </fragment>
+</navigation>

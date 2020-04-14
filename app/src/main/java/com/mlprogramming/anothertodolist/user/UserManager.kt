@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.user
 
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.auth.api.Auth
@@ -12,14 +11,15 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.auth.AuthInterface
+import com.mlprogramming.anothertodolist.storage.UserStorage
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
 class UserManager @Inject constructor(
-    private val auth: AuthInterface,
-
+    private var auth: AuthInterface,
+    private val userStorage: UserStorage,
     private val userComponentFactory: UserComponent.Factory
 ) {
     companion object {
@@ -30,14 +30,25 @@ class UserManager @Inject constructor(
     private var googleApiClient: GoogleApiClient? = null
 
     var userComponent: UserComponent? = null
-        private set
 
-    val username: String
-        get() = auth.getLoggedUser()
+    fun getUserName(): String? {
+        return auth.getUserMail().let {
+            it?.split("@")!![0]
+        }
+    }
 
-    fun isUserLoggedIn() = userComponent != null
+    fun getUserId(): String? {
+        return auth.getUserId()
+    }
+
+    fun getUserMail(): String? {
+        return auth.getUserMail()
+    }
+
+    fun isUserLoggedIn() = userComponent != null || userStorage.getUserId() != null
 
     fun logout() {
+        userStorage.clearUser()
         auth.logoutUser()
         Auth.GoogleSignInApi.signOut(googleApiClient);
         userComponent = null
@@ -70,7 +81,17 @@ class UserManager @Inject constructor(
             .addOnCompleteListener(onCompleteListener)
     }
 
+    fun loginUserLoggedIn() {
+        if (userComponent == null) {
+            userComponent = userComponentFactory.create()
+        }
+    }
+
     fun userJustLoggedIn() {
+        auth.initUserData()
+        getUserId()?.let { userStorage.setUserId(it) }
+        getUserMail()?.let { userStorage.setUserMail(it) }
+
         userComponent = userComponentFactory.create()
     }
 }

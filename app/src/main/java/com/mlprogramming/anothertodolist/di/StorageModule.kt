@@ -1,7 +1,9 @@
 package com.mlprogramming.anothertodolist.di
 
-import com.mlprogramming.anothertodolist.storage.FirebaseStorage
-import com.mlprogramming.anothertodolist.storage.Storage
+import com.mlprogramming.anothertodolist.storage.FirebaseItemStorage
+import com.mlprogramming.anothertodolist.storage.ItemStorage
+import com.mlprogramming.anothertodolist.storage.SharedPreferencesUserStorage
+import com.mlprogramming.anothertodolist.storage.UserStorage
 import dagger.Binds
 import dagger.Module
 
@@ -9,5 +11,7 @@ import dagger.Module
 abstract class StorageModule {
 
     @Binds
-    abstract fun provideStorage(storage: FirebaseStorage): Storage
+    abstract fun provideOnlineItemStorage(storage: FirebaseItemStorage): ItemStorage
+    @Binds
+    abstract fun provideUserStorage(storage: SharedPreferencesUserStorage): UserStorage
 }

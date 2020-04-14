@@ -123,7 +123,7 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
                     }
                 }
                 state.copy(
-                    navDirection = NavDirection.ToTask(args),
+                    navDirection = NavDirection.FromAlarmToTask(args),
                     loading = true
                 )
             }
@@ -138,7 +138,7 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
                     }
                 }
                 state.copy(
-                    navDirection = NavDirection.ToTask(args),
+                    navDirection = NavDirection.FromAlarmToTask(args),
                     loading = true
                 )
             }

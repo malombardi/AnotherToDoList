@@ -88,7 +88,9 @@ class AlarmFragment : Fragment() {
 
     private fun setupView() {
         alarm_add.setOnClickListener {
-            alarmViewModel.onHandleIntent(UiIntent.AddAlarm(Alarm(cal.time.time)))
+            if (alarm_date.editText?.text!=null && alarm_time.editText?.text!=null){
+                alarmViewModel.onHandleIntent(UiIntent.AddAlarm(Alarm(cal.time.time)))
+            }
         }
 
         cancel.setOnClickListener {
@@ -115,7 +117,7 @@ class AlarmFragment : Fragment() {
             override fun onSwipe(position: Int) {
                 alarmViewModel.onHandleIntent(
                     UiIntent.RemoveAlarm(
-                        alarmViewModel.alarms!!.value!![position]
+                        alarmViewModel.alarms.value!![position]
                     )
                 )
             }

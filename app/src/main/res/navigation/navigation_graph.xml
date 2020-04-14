@@ -18,10 +18,6 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@+id/mainFragment" />
-        <argument
-            android:name="taskId"
-            android:defaultValue="-1"
-            app:argType="integer" />
     </fragment>
 
     <fragment
@@ -30,12 +26,28 @@
         android:label="TaskFragment">
         <action
             android:id="@+id/action_taskFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
             app:enterAnim="@anim/fragment_fade_exit"
             app:exitAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
-            app:popUpTo="@+id/mainFragment" />
+            app:popUpTo="@+id/mainFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_taskFragment_to_alarmFragment"
+            app:destination="@id/alarmFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@+id/taskFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_placeFragment"
+            app:destination="@id/placeFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@+id/taskFragment" />
     </fragment>
 
     <fragment
@@ -44,12 +56,11 @@
         android:label="AlarmFragment">
         <action
             android:id="@+id/action_alarmFragment_to_taskFragment"
-            app:destination="@id/alarmFragment"
             app:enterAnim="@anim/fragment_fade_exit"
             app:exitAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
-            app:popUpTo="@+id/alarmFragment" />
+            app:popUpTo="@+id/taskFragment" />
     </fragment>
 
     <fragment
@@ -58,11 +69,10 @@
         android:label="PlaceFragment">
         <action
             android:id="@+id/action_placeFragment_to_taskFragment"
-            app:destination="@id/alarmFragment"
             app:enterAnim="@anim/fragment_fade_exit"
             app:exitAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_enter"
-            app:popUpTo="@+id/alarmFragment" />
+            app:popUpTo="@+id/taskFragment" />
     </fragment>
 </navigation>

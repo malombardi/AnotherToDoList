@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/label_task_description"
-            android:imeOptions="actionNext"
+            android:imeOptions="actionDone"
             android:inputType="textImeMultiLine"
             android:maxLines="2"
             android:minHeight="@dimen/default__multiline_min_height" />

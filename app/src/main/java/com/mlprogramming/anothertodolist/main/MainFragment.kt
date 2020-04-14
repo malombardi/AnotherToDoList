@@ -137,6 +137,13 @@ class MainFragment : Fragment() {
                             super.onItemRangeInserted(positionStart, itemCount)
                             mainViewModel.onHandleIntent(UiIntent.AllTaskVisible)
                         }
+
+                        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                            super.onItemRangeRemoved(positionStart, itemCount)
+                            if (mFirebaseAdapter!!.itemCount == 0) {
+                                mainViewModel.onHandleIntent(UiIntent.ShowEmpty)
+                            }
+                        }
                     })
 
                     if (mFirebaseAdapter!!.itemCount > 0) {

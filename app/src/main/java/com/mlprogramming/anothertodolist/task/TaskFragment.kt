@@ -13,6 +13,7 @@ import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.Navigator
+import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
@@ -25,6 +26,7 @@ import java.util.*
 
 class TaskFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var navigator: Navigator
 
     private var task: ToDoTask? = null
@@ -55,13 +57,21 @@ class TaskFragment : Fragment() {
 
         navigator = Navigator((activity as MainActivity).getNavController())
 
-        arguments?.let{
+        arguments?.let {
             task = TaskFragmentArgs.fromBundle(it).task
         }
 
         taskViewModel =
             ViewModelProviders.of(this, TaskViewModelFactory(task, storageManager, userManager))
                 .get(TaskViewModel::class.java)
+
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+
+        sharedViewModel.task.observe(this, Observer<ToDoTask> { data ->
+            data?.let {
+                task = data
+            }
+        })
 
         if (task != null) {
             taskViewModel.onHandleIntent(UiIntent.Loading)

@@ -1,6 +1,5 @@
 package com.mlprogramming.anothertodolist.alarm
 
-import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
@@ -11,7 +10,8 @@ data class UiState(
     val alarms: MutableLiveData<ArrayList<Alarm>>? = null,
     val alarmDate: String? = null,
     val alarmTime: String? = null,
-    val loading: Boolean? = false
+    val loading: Boolean? = false,
+    val save: Boolean? = false
 )
 
 sealed class UiIntent {
@@ -118,7 +118,8 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
 
                 state.copy(
                     navDirection = fragmentDirections,
-                    loading = true
+                    loading = true,
+                    save = true
                 )
             }
 
@@ -141,6 +142,7 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
         alarms = alarms,
         alarmDate = null,
         alarmTime = null,
-        loading = null
+        loading = null,
+        save = null
     )
 }

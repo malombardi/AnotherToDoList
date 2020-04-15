@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.Navigator
+import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.utils.TouchHelperSwipe
@@ -30,6 +31,7 @@ import kotlin.collections.ArrayList
 
 class AlarmFragment : Fragment() {
     private lateinit var alarmViewModel: AlarmViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var navigator: Navigator
     private lateinit var task: ToDoTask
 
@@ -51,13 +53,20 @@ class AlarmFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         navigator = Navigator((activity as MainActivity).getNavController())
 
-        arguments?.let{
+        arguments?.let {
             task = AlarmFragmentArgs.fromBundle(it).task!!
         }
 
         alarmViewModel =
             ViewModelProviders.of(this, AlarmViewModelFactory(task))
                 .get(AlarmViewModel::class.java)
+
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        sharedViewModel.task.observe(this, Observer<ToDoTask> { data ->
+            data?.let {
+                task = data
+            }
+        })
 
         deleteIcon = UiUtils.getDeleteIcon(activity!!.applicationContext)
 
@@ -69,6 +78,11 @@ class AlarmFragment : Fragment() {
 
     private fun setupStateObserver() {
         alarmViewModel.uiState.observe(this, Observer { state ->
+            state.save?.let {
+                when(it){
+                    true -> sharedViewModel.updateData(task)
+                }
+            }
             state.navDirection?.let {
                 navigator.navigate(it as NavDirections)
                 alarmViewModel.onHandleIntent(UiIntent.NavigationCompleted)
@@ -92,7 +106,7 @@ class AlarmFragment : Fragment() {
 
     private fun setupView() {
         alarm_add.setOnClickListener {
-            if (alarm_date.editText?.text!=null && alarm_time.editText?.text!=null){
+            if (alarm_date.editText?.text != null && alarm_time.editText?.text != null) {
                 alarmViewModel.onHandleIntent(UiIntent.AddAlarm(Alarm(cal.time.time)))
             }
         }

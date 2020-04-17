@@ -33,7 +33,6 @@ sealed class UiIntent {
     object Cancel : UiIntent()
     object Loading : UiIntent()
     object NavigationCompleted : UiIntent()
-    object AddTask : UiIntent()
 }
 
 sealed class Command {
@@ -50,7 +49,6 @@ sealed class Command {
     object Cancel : Command()
     object Loading : Command()
     object NavigationCompleted : Command()
-    object AddTask : Command()
 }
 
 class TaskViewModel(
@@ -76,8 +74,6 @@ class TaskViewModel(
     fun onHandleIntent(intent: UiIntent) {
         return when (intent) {
             is UiIntent.ShowTask -> onCommand(Command.ShowTask)
-
-            is UiIntent.AddTask -> onCommand(Command.AddTask)
 
             is UiIntent.AddAlarm -> onCommand(Command.AddAlarm)
 
@@ -115,20 +111,6 @@ class TaskViewModel(
                     taskDate = task.value!!.date,
                     taskPlaces = task.value!!.places,
                     taskAlarm = task.value!!.alarms,
-                    loading = false
-                )
-            }
-
-            is Command.AddTask -> {
-                task.value = ToDoTask(id = Utility.getRandomId())
-
-                state.copy(
-                    navDirection = null,
-                    taskTitle = null,
-                    taskDescription = null,
-                    taskDate = null,
-                    taskPlaces = null,
-                    taskAlarm = null,
                     loading = false
                 )
             }

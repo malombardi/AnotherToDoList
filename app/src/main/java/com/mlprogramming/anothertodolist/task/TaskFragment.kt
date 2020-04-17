@@ -17,6 +17,7 @@ import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.model.Utility
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
@@ -50,10 +51,10 @@ class TaskFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         userManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.userManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.userManager()
         userManager.userComponent!!.inject(this)
         storageManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.storageManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.storageManager()
 
         navigator = Navigator((activity as MainActivity).getNavController())
 
@@ -73,11 +74,9 @@ class TaskFragment : Fragment() {
             }
         })
 
-        if (task != null) {
-            taskViewModel.onHandleIntent(UiIntent.Loading)
-        } else {
-            taskViewModel.onHandleIntent(UiIntent.AddTask)
-        }
+
+        taskViewModel.onHandleIntent(UiIntent.Loading)
+
         setupView()
         setupStateObserver()
     }
@@ -126,7 +125,7 @@ class TaskFragment : Fragment() {
 
         task_date.editText!!.setOnClickListener {
             DatePickerDialog(
-                activity!!,
+                requireActivity(),
                 dateSetListener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -165,7 +164,7 @@ class TaskFragment : Fragment() {
                     place_count.visibility = View.GONE
                 } else {
                     place_count.visibility = View.VISIBLE
-                    place_count.setText(it.size)
+                    place_count.text = it.size.toString()
                 }
             }
             state.taskAlarm?.let {

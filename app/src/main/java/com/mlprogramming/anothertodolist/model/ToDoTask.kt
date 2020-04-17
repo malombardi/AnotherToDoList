@@ -1,5 +1,6 @@
 package com.mlprogramming.anothertodolist.model
 
+import com.google.android.gms.maps.model.Marker
 import java.io.Serializable
 
 enum class Status {
@@ -7,9 +8,7 @@ enum class Status {
 }
 
 data class Place(
-    var latitude: Long? = null,
-    var longitude: Long? = null,
-    var name: String? = null
+    var marker: Marker? = null
 )
 
 data class Alarm(

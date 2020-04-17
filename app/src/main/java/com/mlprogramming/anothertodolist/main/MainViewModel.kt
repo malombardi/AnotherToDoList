@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.model.Utility
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.coroutines.*
@@ -100,7 +101,11 @@ class MainViewModel : ViewModel() {
         return when (command) {
             is Command.ProceedToTask -> {
                 val fragmentDirections = MainFragmentDirections.actionMainFragmentToTaskFragment()
-                fragmentDirections.task = command.task
+                if (command.task != null) {
+                    fragmentDirections.task = command.task
+                } else {
+                    fragmentDirections.task = ToDoTask(id = Utility.getRandomId())
+                }
                 state.copy(
                     navDirection = fragmentDirections,
                     loading = true

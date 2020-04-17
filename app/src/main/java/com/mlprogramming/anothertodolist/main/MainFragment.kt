@@ -45,16 +45,16 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         userManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.userManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.userManager()
         userManager.userComponent!!.inject(this)
 
         storageManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.storageManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.storageManager()
 
         navigator = Navigator((activity as MainActivity).getNavController())
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         mainViewModel.setUserManager(userManager)
-        deleteIcon = UiUtils.getDeleteIcon(activity!!.applicationContext)
+        deleteIcon = UiUtils.getDeleteIcon(requireActivity().applicationContext)
         setupView()
         setupStateObserver()
     }

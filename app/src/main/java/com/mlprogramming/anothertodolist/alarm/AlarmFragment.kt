@@ -68,7 +68,7 @@ class AlarmFragment : Fragment() {
             }
         })
 
-        deleteIcon = UiUtils.getDeleteIcon(activity!!.applicationContext)
+        deleteIcon = UiUtils.getDeleteIcon(requireActivity().applicationContext)
 
         setupView()
         initDatePicker()
@@ -153,7 +153,7 @@ class AlarmFragment : Fragment() {
 
         alarm_date.editText!!.setOnClickListener {
             DatePickerDialog(
-                activity!!,
+                requireActivity(),
                 dateSetListener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -172,7 +172,7 @@ class AlarmFragment : Fragment() {
 
         alarm_time.editText!!.setOnClickListener {
             TimePickerDialog(
-                activity!!,
+                requireActivity(),
                 timeSetListener,
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),

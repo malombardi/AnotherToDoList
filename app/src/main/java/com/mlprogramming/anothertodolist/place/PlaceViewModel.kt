@@ -85,7 +85,7 @@ class PlaceViewModel(private val task: ToDoTask) : ViewModel() {
                     places.value = ArrayList<Place>()
                 }
                 val place = command.place
-                place.marker!!.title = ("Place " + places.value!!.size + 1)
+                place.title = ("Place " + places.value!!.size)
 
                 places.value!!.add(place)
                 state.copy(

@@ -93,11 +93,11 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                 if (map != null) {
                     for (place in it.value!!) {
                         val marker =
-                        map!!.addMarker(
-                            MarkerOptions()
-                                .position(place.marker!!.position)
-                                .title(place.marker!!.title)
-                        )
+                            map!!.addMarker(
+                                MarkerOptions()
+                                    .position(LatLng(place.latitude!!, place.longitude!!))
+                                    .title(place.title!!)
+                            )
 
                         marker.isDraggable = true
                     }
@@ -115,7 +115,10 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                 map!!.addMarker(MarkerOptions().position(point))
 
             newMarker.remove()
-            val place = Place().apply { marker = newMarker }
+            val place = Place().apply {
+                latitude = point.latitude
+                longitude = point.longitude
+            }
 
             placeViewModel.onHandleIntent(UiIntent.AddPlace(place))
         }

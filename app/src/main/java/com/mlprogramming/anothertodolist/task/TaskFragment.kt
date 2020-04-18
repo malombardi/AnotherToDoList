@@ -2,6 +2,8 @@ package com.mlprogramming.anothertodolist.task
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,13 +85,7 @@ class TaskFragment : Fragment() {
 
     private fun setupView() {
         save.setOnClickListener {
-            taskViewModel.onHandleIntent(
-                UiIntent.Save(
-                    task_title.editText!!.text.toString(),
-                    task_description.editText!!.text.toString(),
-                    task_date.editText!!.text.toString()
-                )
-            )
+            taskViewModel.onHandleIntent(UiIntent.Save)
         }
         cancel.setOnClickListener {
             taskViewModel.onHandleIntent(UiIntent.Cancel)
@@ -102,6 +98,19 @@ class TaskFragment : Fragment() {
         add_place.setOnClickListener {
             taskViewModel.onHandleIntent(UiIntent.AddPlace)
         }
+
+        task_title.editText!!.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                taskViewModel.onHandleIntent(UiIntent.SetTitle(task_title.editText!!.text.toString()))
+            }
+        }
+
+        task_description.editText!!.onFocusChangeListener =
+            View.OnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    taskViewModel.onHandleIntent(UiIntent.SetDescription(task_description.editText!!.text.toString()))
+                }
+            }
 
         initDatePicker()
     }
@@ -124,6 +133,7 @@ class TaskFragment : Fragment() {
             }
 
         task_date.editText!!.setOnClickListener {
+            requireView().requestFocus()
             DatePickerDialog(
                 requireActivity(),
                 dateSetListener,

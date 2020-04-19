@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.Navigator
+import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.utils.TouchHelperSwipe
@@ -30,6 +31,7 @@ import kotlin.collections.ArrayList
 
 class AlarmFragment : Fragment() {
     private lateinit var alarmViewModel: AlarmViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var navigator: Navigator
     private lateinit var task: ToDoTask
 
@@ -51,7 +53,7 @@ class AlarmFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         navigator = Navigator((activity as MainActivity).getNavController())
 
-        arguments?.let{
+        arguments?.let {
             task = AlarmFragmentArgs.fromBundle(it).task!!
         }
 
@@ -59,7 +61,14 @@ class AlarmFragment : Fragment() {
             ViewModelProviders.of(this, AlarmViewModelFactory(task))
                 .get(AlarmViewModel::class.java)
 
-        deleteIcon = UiUtils.getDeleteIcon(activity!!.applicationContext)
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        sharedViewModel.task.observe(this, Observer<ToDoTask> { data ->
+            data?.let {
+                task = data
+            }
+        })
+
+        deleteIcon = UiUtils.getDeleteIcon(requireActivity().applicationContext)
 
         setupView()
         initDatePicker()
@@ -69,6 +78,11 @@ class AlarmFragment : Fragment() {
 
     private fun setupStateObserver() {
         alarmViewModel.uiState.observe(this, Observer { state ->
+            state.save?.let {
+                when(it){
+                    true -> sharedViewModel.updateData(task)
+                }
+            }
             state.navDirection?.let {
                 navigator.navigate(it as NavDirections)
                 alarmViewModel.onHandleIntent(UiIntent.NavigationCompleted)
@@ -92,17 +106,17 @@ class AlarmFragment : Fragment() {
 
     private fun setupView() {
         alarm_add.setOnClickListener {
-            if (alarm_date.editText?.text!=null && alarm_time.editText?.text!=null){
+            if (alarm_date.editText?.text != null && alarm_time.editText?.text != null) {
                 alarmViewModel.onHandleIntent(UiIntent.AddAlarm(Alarm(cal.time.time)))
             }
         }
 
         cancel.setOnClickListener {
-            alarmViewModel.onHandleIntent(UiIntent.Cancel)
+            alarmViewModel.onHandleIntent(UiIntent.Cancel(requireActivity()))
         }
 
         save.setOnClickListener {
-            alarmViewModel.onHandleIntent(UiIntent.SaveAlarms)
+            alarmViewModel.onHandleIntent(UiIntent.SaveAlarms(requireActivity()))
         }
 
         val manager = LinearLayoutManager(activity).apply {
@@ -139,7 +153,7 @@ class AlarmFragment : Fragment() {
 
         alarm_date.editText!!.setOnClickListener {
             DatePickerDialog(
-                activity!!,
+                requireActivity(),
                 dateSetListener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -158,7 +172,7 @@ class AlarmFragment : Fragment() {
 
         alarm_time.editText!!.setOnClickListener {
             TimePickerDialog(
-                activity!!,
+                requireActivity(),
                 timeSetListener,
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="@dimen/min_margin"
     android:background="@android:color/white"
     android:minHeight="@dimen/default_min_height"
-    android:paddingBottom="@dimen/default_padding"
     android:paddingTop="@dimen/default_padding"
+    android:paddingBottom="@dimen/default_padding"
     app:cardCornerRadius="@dimen/default_radius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             android:gravity="start"
-            android:padding="8dp"
+            android:padding="@dimen/min_padding"
             android:singleLine="true"
             android:textAlignment="textStart"
             android:textColor="@android:color/black"
@@ -35,9 +35,8 @@
             android:id="@+id/alarm_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginStart="@dimen/default_margin"
+            android:padding="@dimen/min_padding"
             android:src="@drawable/ic_alarm_on"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,9 +46,9 @@
             android:id="@+id/place_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginStart="@dimen/default_margin"
+
+            android:padding="@dimen/min_padding"
             android:src="@drawable/ic_location"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/alarm_count"

@@ -20,37 +20,30 @@ data class UiState(
 )
 
 sealed class UiIntent {
-    data class Save(
-        val title: String,
-        val description: String,
-        val dueDate: String
-    ) : UiIntent()
+    object Save : UiIntent()
 
     data class SetDueDate(val date: String) : UiIntent()
+    data class SetTitle(val title: String) : UiIntent()
+    data class SetDescription(val description: String) : UiIntent()
     object AddAlarm : UiIntent()
     object AddPlace : UiIntent()
     object ShowTask : UiIntent()
     object Cancel : UiIntent()
     object Loading : UiIntent()
     object NavigationCompleted : UiIntent()
-    object AddTask : UiIntent()
 }
 
 sealed class Command {
     data class SetDueDate(val date: String) : Command()
-    data class Save(
-        val title: String,
-        val description: String,
-        val dueDate: String
-    ) : Command()
-
+    data class SetTitle(val title: String) : Command()
+    data class SetDescription(val description: String) : Command()
+    object Save : Command()
     object AddAlarm : Command()
     object AddPlace : Command()
     object ShowTask : Command()
     object Cancel : Command()
     object Loading : Command()
     object NavigationCompleted : Command()
-    object AddTask : Command()
 }
 
 class TaskViewModel(
@@ -77,23 +70,19 @@ class TaskViewModel(
         return when (intent) {
             is UiIntent.ShowTask -> onCommand(Command.ShowTask)
 
-            is UiIntent.AddTask -> onCommand(Command.AddTask)
-
             is UiIntent.AddAlarm -> onCommand(Command.AddAlarm)
 
             is UiIntent.AddPlace -> onCommand(Command.AddPlace)
 
             is UiIntent.Loading -> onCommand(Command.Loading)
 
-            is UiIntent.Save -> onCommand(
-                Command.Save(
-                    intent.title,
-                    intent.description,
-                    intent.dueDate
-                )
-            )
+            is UiIntent.Save -> onCommand(Command.Save)
 
             is UiIntent.SetDueDate -> onCommand(Command.SetDueDate(intent.date))
+
+            is UiIntent.SetTitle -> onCommand(Command.SetTitle(intent.title))
+
+            is UiIntent.SetDescription -> onCommand(Command.SetDescription(intent.description))
 
             is UiIntent.Cancel -> onCommand(Command.Cancel)
 
@@ -119,20 +108,6 @@ class TaskViewModel(
                 )
             }
 
-            is Command.AddTask -> {
-                task.value = ToDoTask(id = Utility.getRandomId())
-
-                state.copy(
-                    navDirection = null,
-                    taskTitle = null,
-                    taskDescription = null,
-                    taskDate = null,
-                    taskPlaces = null,
-                    taskAlarm = null,
-                    loading = false
-                )
-            }
-
             is Command.Loading -> {
                 state.copy(
                     loading = true
@@ -142,19 +117,28 @@ class TaskViewModel(
             is Command.NavigationCompleted -> state.copy(navDirection = null)
 
             is Command.SetDueDate -> {
+                task.value!!.date = command.date
                 state.copy(
                     taskDate = command.date
                 )
             }
 
+            is Command.SetTitle -> {
+                task.value!!.title = command.title
+                state.copy(
+                    taskTitle = command.title
+                )
+            }
+
+            is Command.SetDescription -> {
+                task.value!!.description = command.description
+                state.copy(
+                    taskDescription = command.description
+                )
+            }
+
             is Command.Save -> {
-                val toDoTask = task.value!!
-                toDoTask.title = command.title
-                toDoTask.description = command.description
-                toDoTask.date = command.dueDate
-                toDoTask.alarms = task.value!!.alarms
-                toDoTask.places = task.value!!.places
-                storageManager.saveTask(userManager.getUserId()!!, toDoTask)
+                storageManager.saveTask(userManager.getUserId()!!, task.value!!)
                 val fragmentDirections =
                     TaskFragmentDirections.actionTaskFragmentToMainFragment()
                 state.copy(navDirection = fragmentDirections)

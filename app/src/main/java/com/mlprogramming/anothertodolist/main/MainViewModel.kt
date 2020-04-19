@@ -1,11 +1,14 @@
 package com.mlprogramming.anothertodolist.main
 
+import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.model.Utility
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
+import com.mlprogramming.anothertodolist.utils.NotificationUtils
 import kotlinx.coroutines.*
 
 data class UiState(
@@ -19,7 +22,7 @@ data class UiState(
 
 sealed class UiIntent {
     data class ProceedToTask(var task: ToDoTask?) : UiIntent()
-    data class DeleteTask(val task: ToDoTask) : UiIntent()
+    data class DeleteTask(val task: ToDoTask, val activity: Activity) : UiIntent()
     object Loading : UiIntent()
     object StopLoading : UiIntent()
     object AllTaskVisible : UiIntent()
@@ -33,7 +36,7 @@ sealed class UiIntent {
 sealed class Command {
     data class ProceedToTask(var task: ToDoTask?) : Command()
     data class ShowAllTasks(var options: FirebaseRecyclerOptions<ToDoTask>) : Command()
-    data class DeleteTask(val task: ToDoTask) : Command()
+    data class DeleteTask(val task: ToDoTask, val activity: Activity) : Command()
     object Loading : Command()
     object AllTaskVisible : Command()
     object ShowEmpty : Command()
@@ -87,7 +90,7 @@ class MainViewModel : ViewModel() {
             is UiIntent.StopLoading -> onCommand(Command.StopLoading)
             is UiIntent.ToastShown -> onCommand(Command.ToastShown)
             is UiIntent.AddTask -> onCommand(Command.ProceedToTask(null))
-            is UiIntent.DeleteTask -> onCommand(Command.DeleteTask(intent.task))
+            is UiIntent.DeleteTask -> onCommand(Command.DeleteTask(intent.task, intent.activity))
         }
     }
 
@@ -100,7 +103,12 @@ class MainViewModel : ViewModel() {
         return when (command) {
             is Command.ProceedToTask -> {
                 val fragmentDirections = MainFragmentDirections.actionMainFragmentToTaskFragment()
-                fragmentDirections.task = command.task
+                if (command.task != null) {
+                    fragmentDirections.task = command.task
+                } else {
+                    fragmentDirections.task =
+                        ToDoTask(internalId = options!!.snapshots.size, id = Utility.getRandomId())
+                }
                 state.copy(
                     navDirection = fragmentDirections,
                     loading = true
@@ -151,6 +159,15 @@ class MainViewModel : ViewModel() {
             }
 
             is Command.DeleteTask -> {
+                if (command.task.alarms != null) {
+                    for (alarm in command.task.alarms!!) {
+                        NotificationUtils().cancelNotification(
+                            command.task,
+                            alarm.time!!,
+                            command.activity
+                        )
+                    }
+                }
                 storageManager.deleteTask(userManager.getUserId()!!, command.task)
                 state.copy(
                     msgs = "deleted"

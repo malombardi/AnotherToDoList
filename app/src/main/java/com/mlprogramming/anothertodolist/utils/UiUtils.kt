@@ -12,7 +12,7 @@ import com.mlprogramming.anothertodolist.R
 
 class UiUtils {
     companion object {
-        private val colorDrawableBackground = ColorDrawable(Color.parseColor("#f7f7f7"))
+        private val colorDrawableBackground = ColorDrawable(Color.parseColor("#a5d6a7"))
 
         fun getDeleteIcon(context: Context): Drawable {
             return ContextCompat.getDrawable(context, R.drawable.ic_remove)!!

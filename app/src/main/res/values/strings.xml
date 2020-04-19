@@ -14,4 +14,6 @@
     <string name="empty_list">There\'re no taks to show</string>
     <string name="label_alarm_date">Date</string>
     <string name="label_alarm_time">Time</string>
+    <string name="title_activity_place">Map</string>
+    <string name="notification_channel_description">AnotherToDoList notification channel</string>
 </resources>

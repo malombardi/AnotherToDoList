@@ -2,6 +2,8 @@ package com.mlprogramming.anothertodolist.task
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +15,11 @@ import com.mlprogramming.anothertodolist.AnotherToDoListApplication
 import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.main.Navigator
+import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.model.Utility
 import com.mlprogramming.anothertodolist.storage.StorageManager
 import com.mlprogramming.anothertodolist.user.UserManager
 import kotlinx.android.synthetic.main.fragment_task.*
@@ -25,6 +29,7 @@ import java.util.*
 
 class TaskFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var navigator: Navigator
 
     private var task: ToDoTask? = null
@@ -48,14 +53,14 @@ class TaskFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         userManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.userManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.userManager()
         userManager.userComponent!!.inject(this)
         storageManager =
-            (activity!!.application as AnotherToDoListApplication).appComponent.storageManager()
+            (requireActivity().application as AnotherToDoListApplication).appComponent.storageManager()
 
         navigator = Navigator((activity as MainActivity).getNavController())
 
-        arguments?.let{
+        arguments?.let {
             task = TaskFragmentArgs.fromBundle(it).task
         }
 
@@ -63,36 +68,52 @@ class TaskFragment : Fragment() {
             ViewModelProviders.of(this, TaskViewModelFactory(task, storageManager, userManager))
                 .get(TaskViewModel::class.java)
 
-        if (task != null) {
-            taskViewModel.onHandleIntent(UiIntent.Loading)
-        } else {
-            taskViewModel.onHandleIntent(UiIntent.AddTask)
-        }
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+
+        sharedViewModel.task.observe(this, Observer<ToDoTask> { data ->
+            data?.let {
+                task = data
+            }
+        })
+
+
+        taskViewModel.onHandleIntent(UiIntent.Loading)
+
         setupView()
         setupStateObserver()
     }
 
     private fun setupView() {
         save.setOnClickListener {
-            taskViewModel.onHandleIntent(
-                UiIntent.Save(
-                    task_title.editText!!.text.toString(),
-                    task_description.editText!!.text.toString(),
-                    task_date.editText!!.text.toString()
-                )
-            )
+            requireView().requestFocus()
+            taskViewModel.onHandleIntent(UiIntent.Save)
         }
         cancel.setOnClickListener {
             taskViewModel.onHandleIntent(UiIntent.Cancel)
         }
 
         add_alarm.setOnClickListener {
+            requireView().requestFocus()
             taskViewModel.onHandleIntent(UiIntent.AddAlarm)
         }
 
         add_place.setOnClickListener {
+            requireView().requestFocus()
             taskViewModel.onHandleIntent(UiIntent.AddPlace)
         }
+
+        task_title.editText!!.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                taskViewModel.onHandleIntent(UiIntent.SetTitle(task_title.editText!!.text.toString()))
+            }
+        }
+
+        task_description.editText!!.onFocusChangeListener =
+            View.OnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    taskViewModel.onHandleIntent(UiIntent.SetDescription(task_description.editText!!.text.toString()))
+                }
+            }
 
         initDatePicker()
     }
@@ -115,8 +136,9 @@ class TaskFragment : Fragment() {
             }
 
         task_date.editText!!.setOnClickListener {
+            requireView().requestFocus()
             DatePickerDialog(
-                activity!!,
+                requireActivity(),
                 dateSetListener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -155,7 +177,7 @@ class TaskFragment : Fragment() {
                     place_count.visibility = View.GONE
                 } else {
                     place_count.visibility = View.VISIBLE
-                    place_count.setText(it.size)
+                    place_count.text = it.size.toString()
                 }
             }
             state.taskAlarm?.let {

@@ -112,11 +112,11 @@ class AlarmFragment : Fragment() {
         }
 
         cancel.setOnClickListener {
-            alarmViewModel.onHandleIntent(UiIntent.Cancel)
+            alarmViewModel.onHandleIntent(UiIntent.Cancel(requireActivity()))
         }
 
         save.setOnClickListener {
-            alarmViewModel.onHandleIntent(UiIntent.SaveAlarms)
+            alarmViewModel.onHandleIntent(UiIntent.SaveAlarms(requireActivity()))
         }
 
         val manager = LinearLayoutManager(activity).apply {

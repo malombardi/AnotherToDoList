@@ -85,6 +85,7 @@ class TaskFragment : Fragment() {
 
     private fun setupView() {
         save.setOnClickListener {
+            requireView().requestFocus()
             taskViewModel.onHandleIntent(UiIntent.Save)
         }
         cancel.setOnClickListener {
@@ -92,10 +93,12 @@ class TaskFragment : Fragment() {
         }
 
         add_alarm.setOnClickListener {
+            requireView().requestFocus()
             taskViewModel.onHandleIntent(UiIntent.AddAlarm)
         }
 
         add_place.setOnClickListener {
+            requireView().requestFocus()
             taskViewModel.onHandleIntent(UiIntent.AddPlace)
         }
 

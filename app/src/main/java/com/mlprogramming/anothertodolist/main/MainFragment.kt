@@ -46,6 +46,9 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         userManager =
             (requireActivity().application as AnotherToDoListApplication).appComponent.userManager()
+        if (userManager.userComponent == null) {
+            userManager.loginUserLoggedIn()
+        }
         userManager.userComponent!!.inject(this)
 
         storageManager =
@@ -82,7 +85,8 @@ class MainFragment : Fragment() {
             override fun onSwipe(position: Int) {
                 mainViewModel.onHandleIntent(
                     UiIntent.DeleteTask(
-                        mFirebaseAdapter!!.getItem(position)
+                        mFirebaseAdapter!!.getItem(position),
+                        requireActivity()
                     )
                 )
             }

@@ -1,9 +1,11 @@
 package com.mlprogramming.anothertodolist.alarm
 
+import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mlprogramming.anothertodolist.model.Alarm
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.utils.NotificationUtils
 
 data class UiState(
     val navDirection: Any? = null,
@@ -19,8 +21,8 @@ sealed class UiIntent {
     data class AddAlarm(var alarm: Alarm) : UiIntent()
     data class SetAlarmDate(var date: String) : UiIntent()
     data class SetAlarmTime(var time: String) : UiIntent()
-    object SaveAlarms : UiIntent()
-    object Cancel : UiIntent()
+    data class SaveAlarms(var activity: Activity) : UiIntent()
+    data class Cancel(var activity: Activity) : UiIntent()
     object NavigationCompleted : UiIntent()
     object ShowAllAlarms : UiIntent()
 }
@@ -31,8 +33,8 @@ sealed class Command {
     data class SetAlarmDate(var date: String) : Command()
     data class SetAlarmTime(var time: String) : Command()
     object ShowAllAlarms : Command()
-    object SaveAlarms : Command()
-    object Cancel : Command()
+    data class SaveAlarms(var activity: Activity) : Command()
+    data class Cancel(var activity: Activity) : Command()
     object NavigationCompleted : Command()
 }
 
@@ -49,11 +51,11 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
 
     fun onHandleIntent(intent: UiIntent) {
         return when (intent) {
-            is UiIntent.Cancel -> onCommand(Command.Cancel)
+            is UiIntent.Cancel -> onCommand(Command.Cancel(intent.activity))
 
             is UiIntent.ShowAllAlarms -> onCommand(Command.ShowAllAlarms)
 
-            is UiIntent.SaveAlarms -> onCommand(Command.SaveAlarms)
+            is UiIntent.SaveAlarms -> onCommand(Command.SaveAlarms(intent.activity))
 
             is UiIntent.RemoveAlarm -> onCommand(Command.RemoveAlarm(intent.alarm))
 
@@ -113,6 +115,9 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
             is Command.SaveAlarms -> {
                 toDoTask.alarms = alarms.value
 
+                for (alarm in alarms.value!!) {
+                    NotificationUtils().setNotification(toDoTask, alarm.time!!, command.activity)
+                }
                 val fragmentDirections =
                     AlarmFragmentDirections.actionAlarmFragmentToTaskFragment()
 
@@ -124,6 +129,15 @@ class AlarmViewModel(private val toDoTask: ToDoTask) : ViewModel() {
             }
 
             is Command.Cancel -> {
+                if (toDoTask.alarms!=null) {
+                    for (alarm in toDoTask.alarms!!) {
+                        NotificationUtils().setNotification(
+                            toDoTask,
+                            alarm.time!!,
+                            command.activity
+                        )
+                    }
+                }
                 val fragmentDirections =
                     AlarmFragmentDirections.actionAlarmFragmentToTaskFragment()
 

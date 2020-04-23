@@ -1,5 +1,8 @@
 package com.mlprogramming.anothertodolist.place
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +24,7 @@ import com.mlprogramming.anothertodolist.main.Navigator
 import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_LOCATION_PERMISSION
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment : Fragment(), OnMapReadyCallback {
@@ -30,6 +34,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
     private lateinit var task: ToDoTask
     private var map: GoogleMap? = null
     private lateinit var mapView: MapView
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +59,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
         }
 
         placeViewModel =
-            ViewModelProviders.of(this, PlaceViewModelFactory(task))
+            ViewModelProviders.of(this, PlaceViewModelFactory(requireActivity(), task))
                 .get(PlaceViewModel::class.java)
 
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
@@ -66,6 +71,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
 
         finishViewSetup()
         setupStateObserver()
+        placeViewModel.onHandleIntent(UiIntent.InitializeVars)
     }
 
     private fun finishViewSetup() {
@@ -103,6 +109,14 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                     }
                 }
             }
+            state.currentLocation?.let {
+                moveCameraToLocation(it)
+            }
+            state.needPermissions?.let {
+                if (it){
+                    requestPermissions()
+                }
+            }
         })
     }
 
@@ -119,15 +133,40 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                 latitude = point.latitude
                 longitude = point.longitude
             }
-
             placeViewModel.onHandleIntent(UiIntent.AddPlace(place))
         }
-
         placeViewModel.onHandleIntent(UiIntent.ShowPlaces)
-/*
-        val cameraPosition =
-            CameraPosition.Builder().zoom(12f).build()
-        map!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))*/
+    }
+
+    private fun requestPermissions() {
+        requestPermissions(
+            arrayOf<String>(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            REQUEST_LOCATION_PERMISSION
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
+                placeViewModel.onHandleIntent(UiIntent.PermissionsGranted)
+            }
+        }
+    }
+
+    private fun moveCameraToLocation(location: Location?) {
+        map!!.isMyLocationEnabled = true
+        location?.let {
+            val myLatLng = LatLng(it.latitude, it.longitude)
+            val cameraPosition = CameraPosition.Builder().target(myLatLng).zoom(12f).build()
+            map!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        }
     }
 
     override fun onResume() {

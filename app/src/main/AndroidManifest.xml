@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mlprogramming.anothertodolist">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
@@ -37,8 +37,12 @@
             android:windowSoftInputMode="adjustPan" />
 
         <service android:name=".notification.NotificationService" />
+
         <receiver
             android:name=".alarm.AlarmReceiver"
+            android:enabled="true" />
+        <receiver
+            android:name=".place.GeofenceBroadcastReceiver"
             android:enabled="true" />
     </application>
 

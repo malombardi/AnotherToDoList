@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver.Companion.INTENT_EXTRA
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.utils.UiUtils.Companion.generateRequestCode
 import java.util.*
 
 
@@ -50,14 +51,5 @@ class NotificationUtils {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         alarmManager.cancel(pendingIntent);
-    }
-
-    private fun generateRequestCode(internalId: Int, timeInMilliSeconds: Long): Int {
-        var uniqueRequestCode = internalId.toLong()
-        uniqueRequestCode = uniqueRequestCode shl 32
-        uniqueRequestCode += timeInMilliSeconds
-
-        return uniqueRequestCode.toInt()
-
     }
 }

@@ -2,9 +2,12 @@ package com.mlprogramming.anothertodolist.place
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -50,6 +53,15 @@ class PlaceViewModel(
     private val task: ToDoTask
 ) : ViewModel() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    val runningQOrLater =
+        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+    private lateinit var geofencingClient: GeofencingClient
+    private val geofencePendingIntent: PendingIntent by lazy {
+
+        val intent = Intent(activity, GeofenceBroadcastReceiver::class.java)
+        intent.action = ACTION_GEOFENCE_EVENT
+        PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
     companion object {
         const val REQUEST_LOCATION_PERMISSION = 1
@@ -59,8 +71,9 @@ class PlaceViewModel(
         const val LOCATION_PERMISSION_INDEX = 0
         const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
         internal const val ACTION_GEOFENCE_EVENT =
-            "HuntMainActivity.treasureHunt.action.ACTION_GEOFENCE_EVENT"
+            "PlaceFragment.action.ACTION_GEOFENCE_EVENT"
         const val GEOFENCE_RADIUS_IN_METERS = 300f
+        const val FENCE_SEPARATOR = "FenceSeparator"
         val GEOFENCE_EXPIRATION_IN_MILLISECONDS: Long =
             java.util.concurrent.TimeUnit.DAYS.toMillis(365)
     }
@@ -134,6 +147,9 @@ class PlaceViewModel(
             is Command.Save -> {
                 task.places = places.value
 
+                for (place in places.value!!) {
+                    addGeofence(place)
+                }
                 val fragmentDirections =
                     PlaceFragmentDirections.actionPlaceFragmentToTaskFragment()
 
@@ -200,6 +216,40 @@ class PlaceViewModel(
             }
         } else {
             onCommand(Command.RequestPermissions)
+        }
+    }
+
+    private fun addGeofence(place: Place) {
+        val requestId = task.id!! + FENCE_SEPARATOR + place.title
+        val geofence = Geofence.Builder()
+            .setRequestId(requestId)
+            .setCircularRegion(
+                place.latitude!!,
+                place.longitude!!,
+                GEOFENCE_RADIUS_IN_METERS
+            )
+            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            .build()
+
+        val geofencingRequest = GeofencingRequest.Builder()
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            .addGeofence(geofence)
+            .build()
+
+        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+            addOnCompleteListener {
+                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+                    addOnSuccessListener {
+                        Log.e("Add Geofence", geofence.requestId)
+                    }
+                    addOnFailureListener {
+                        if ((it.message != null)) {
+                            Log.w(TAG, it.message!!)
+                        }
+                    }
+                }
+            }
         }
     }
 

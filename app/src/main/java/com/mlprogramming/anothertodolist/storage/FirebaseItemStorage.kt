@@ -1,13 +1,16 @@
 package com.mlprogramming.anothertodolist.storage
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import javax.inject.Inject
 
-const val  ROOT = "root"
+const val ROOT = "root"
 
 class FirebaseItemStorage @Inject constructor(context: Context) : ItemStorage {
     private var firebaseDatabaseReference: DatabaseReference? = null
@@ -17,11 +20,29 @@ class FirebaseItemStorage @Inject constructor(context: Context) : ItemStorage {
         firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
     }
 
-
-    override fun getItem(taskId: String) {
+    override fun getItem(uid: String, taskId: String): MutableLiveData<ToDoTask> {
         if (firebaseDatabaseReference == null) {
             initReference()
         }
+        val mutableLiveData = MutableLiveData<ToDoTask>()
+
+        val myTask = firebaseDatabaseReference!!.child(ROOT)
+            .child(uid).child(taskId).limitToFirst(1)
+
+        myTask.addValueEventListener(object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
+                    mutableLiveData.postValue(postSnapshot.getValue(ToDoTask::class.java))
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        })
+
+        return mutableLiveData
     }
 
     override fun getItems(uid: String) {

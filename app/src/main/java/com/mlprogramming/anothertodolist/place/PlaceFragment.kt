@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -39,6 +38,7 @@ import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.ACTION_GEOFENCE_EVENT
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.BACKGROUND_LOCATION_PERMISSION_INDEX
+import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.FENCE_SEPARATOR
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.GEOFENCE_EXPIRATION_IN_MILLISECONDS
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.GEOFENCE_RADIUS_IN_METERS
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.LOCATION_PERMISSION_INDEX
@@ -55,16 +55,6 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
     private lateinit var task: ToDoTask
     private var map: GoogleMap? = null
     private lateinit var mapView: MapView
-
-    private val runningQOrLater =
-        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
-    private lateinit var geofencingClient: GeofencingClient
-    private val geofencePendingIntent: PendingIntent by lazy {
-
-        val intent = Intent(activity, GeofenceBroadcastReceiver::class.java)
-        intent.action = ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,7 +124,6 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                                     .position(LatLng(place.latitude!!, place.longitude!!))
                                     .title(place.title!!)
                             )
-                        addGeofence(place)
                         marker.isDraggable = true
                     }
                 }
@@ -211,39 +200,6 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun addGeofence(place: Place) {
-        val geofence = Geofence.Builder()
-            .setRequestId(place.title)
-            .setCircularRegion(
-                place.latitude!!,
-                place.longitude!!,
-                GEOFENCE_RADIUS_IN_METERS
-            )
-            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-            .build()
-
-        val geofencingRequest = GeofencingRequest.Builder()
-            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            .addGeofence(geofence)
-            .build()
-
-        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-            addOnCompleteListener {
-                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-                    addOnSuccessListener {
-                        Log.e("Add Geofence", geofence.requestId)
-                    }
-                    addOnFailureListener {
-                        if ((it.message != null)) {
-                            Log.w(TAG, it.message!!)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun requestPermissions() {
         if (foregroundAndBackgroundLocationPermissionApproved()) {
             checkDeviceLocationSettingsAndStartGeofence()
@@ -293,7 +249,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ))
         val backgroundPermissionApproved =
-            if (runningQOrLater) {
+            if (placeViewModel.runningQOrLater) {
                 PackageManager.PERMISSION_GRANTED ==
                         ActivityCompat.checkSelfPermission(
                             requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -313,7 +269,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
         var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
         val resultCode = when {
-            runningQOrLater -> {
+            placeViewModel.runningQOrLater -> {
                 permissionsArray += Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
             }

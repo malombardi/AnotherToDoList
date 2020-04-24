@@ -1,5 +1,6 @@
 package com.mlprogramming.anothertodolist.storage
 
+import androidx.lifecycle.MutableLiveData
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.mlprogramming.anothertodolist.model.ToDoTask
 import javax.inject.Inject
@@ -22,6 +23,10 @@ class StorageManager @Inject constructor(private val onlineItemStorage: Firebase
 
     fun deleteTask(uid: String, toDoTask: ToDoTask) {
         onlineItemStorage.deleteItem(uid, toDoTask)
+    }
+
+    fun getTask(uid: String, taskId: String): MutableLiveData<ToDoTask> {
+        return onlineItemStorage.getItem(uid, taskId)
     }
 
 }

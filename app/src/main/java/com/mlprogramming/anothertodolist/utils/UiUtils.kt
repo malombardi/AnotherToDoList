@@ -117,6 +117,15 @@ class UiUtils {
 
             return ItemTouchHelper(itemTouchHelperCallback)
         }
+
+        fun generateRequestCode(internalId: Int, timeInMilliSeconds: Long): Int {
+            var uniqueRequestCode = internalId.toLong()
+            uniqueRequestCode = uniqueRequestCode shl 32
+            uniqueRequestCode += timeInMilliSeconds
+
+            return uniqueRequestCode.toInt()
+
+        }
     }
 }
 

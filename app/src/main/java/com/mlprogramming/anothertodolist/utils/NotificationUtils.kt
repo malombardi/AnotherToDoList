@@ -3,6 +3,7 @@ package com.mlprogramming.anothertodolist.utils
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import com.google.gson.Gson
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver
@@ -13,7 +14,7 @@ import java.util.*
 
 class NotificationUtils {
 
-    fun setNotification(toDoTask: ToDoTask, timeInMilliSeconds: Long, activity: Activity) {
+    fun setNotification(toDoTask: ToDoTask, timeInMilliSeconds: Long, activity: Context) {
 
         if (timeInMilliSeconds > 0) {
 

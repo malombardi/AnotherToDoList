@@ -53,6 +53,16 @@ class PlaceViewModel(
 
     companion object {
         const val REQUEST_LOCATION_PERMISSION = 1
+        const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
+        const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
+        const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
+        const val LOCATION_PERMISSION_INDEX = 0
+        const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
+        internal const val ACTION_GEOFENCE_EVENT =
+            "HuntMainActivity.treasureHunt.action.ACTION_GEOFENCE_EVENT"
+        const val GEOFENCE_RADIUS_IN_METERS = 300f
+        val GEOFENCE_EXPIRATION_IN_MILLISECONDS: Long =
+            java.util.concurrent.TimeUnit.DAYS.toMillis(365)
     }
 
     var places = MutableLiveData<ArrayList<Place>>(task.places?.clone() as ArrayList<Place>?)

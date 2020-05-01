@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver.Companion.INTENT_EXTRA
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.place.GeofenceReceiver
+import com.mlprogramming.anothertodolist.place.GeofenceReceiver.Companion.INTENT_EXTRA_GEOFENCE
 import com.mlprogramming.anothertodolist.utils.UiUtils.Companion.generateRequestCode
 import java.util.*
 
@@ -39,6 +41,23 @@ class NotificationUtils {
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 
         }
+    }
+
+    fun setNotification(id: Int, title: String, context: Context) {
+        val alarmManager = context.getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(context.applicationContext, GeofenceReceiver::class.java)
+
+        alarmIntent.putExtra(INTENT_EXTRA_GEOFENCE, title)
+
+        val calendar = Calendar.getInstance()
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            generateRequestCode(id, calendar.timeInMillis),
+            alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 
     fun cancelNotification(toDoTask: ToDoTask, timeInMilliSeconds: Long, activity: Activity) {

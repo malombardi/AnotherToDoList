@@ -44,6 +44,9 @@
         <receiver
             android:name=".place.GeofenceBroadcastReceiver"
             android:enabled="true" />
+        <receiver
+            android:name=".place.GeofenceReceiver"
+            android:enabled="true" />
     </application>
 
 </manifest>

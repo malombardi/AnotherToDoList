@@ -2,7 +2,6 @@ package com.mlprogramming.anothertodolist.place
 
 import android.Manifest
 import android.annotation.TargetApi
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -20,7 +19,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavDirections
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -36,11 +37,7 @@ import com.mlprogramming.anothertodolist.main.Navigator
 import com.mlprogramming.anothertodolist.main.SharedViewModel
 import com.mlprogramming.anothertodolist.model.Place
 import com.mlprogramming.anothertodolist.model.ToDoTask
-import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.ACTION_GEOFENCE_EVENT
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.BACKGROUND_LOCATION_PERMISSION_INDEX
-import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.FENCE_SEPARATOR
-import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.GEOFENCE_EXPIRATION_IN_MILLISECONDS
-import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.GEOFENCE_RADIUS_IN_METERS
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.LOCATION_PERMISSION_INDEX
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE

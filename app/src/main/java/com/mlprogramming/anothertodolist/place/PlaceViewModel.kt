@@ -190,6 +190,7 @@ class PlaceViewModel(
     private fun initializeVars() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(activity)
+        geofencingClient = LocationServices.getGeofencingClient(activity)
         enableMyLocation()
     }
 
@@ -220,7 +221,7 @@ class PlaceViewModel(
     }
 
     private fun addGeofence(place: Place) {
-        val requestId = task.id!! + FENCE_SEPARATOR + place.title
+        val requestId = "" + task.internalId!! + FENCE_SEPARATOR + task.title
         val geofence = Geofence.Builder()
             .setRequestId(requestId)
             .setCircularRegion(
@@ -241,11 +242,11 @@ class PlaceViewModel(
             addOnCompleteListener {
                 geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                     addOnSuccessListener {
-                        Log.e("Add Geofence", geofence.requestId)
+                        Log.e(TAG, "success"+geofence.requestId)
                     }
                     addOnFailureListener {
                         if ((it.message != null)) {
-                            Log.w(TAG, it.message!!)
+                            Log.w(TAG, "Error" + it.stackTrace)
                         }
                     }
                 }

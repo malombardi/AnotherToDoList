@@ -13,6 +13,7 @@ import com.mlprogramming.anothertodolist.R
 import com.mlprogramming.anothertodolist.alarm.AlarmReceiver
 import com.mlprogramming.anothertodolist.main.MainActivity
 import com.mlprogramming.anothertodolist.model.ToDoTask
+import com.mlprogramming.anothertodolist.place.GeofenceReceiver
 
 class NotificationService : IntentService("NotificationService") {
     private lateinit var mNotification: Notification
@@ -45,67 +46,85 @@ class NotificationService : IntentService("NotificationService") {
     override fun onHandleIntent(intent: Intent?) {
         createChannel()
 
-        var task: ToDoTask? = null
         if (intent != null && intent.extras != null) {
-            val gson = Gson()
-            task = gson.fromJson<ToDoTask>(
-                intent.extras!!.getString(AlarmReceiver.INTENT_EXTRA),
-                ToDoTask::class.java
-            )
-        }
-
-        if (task != null) {
-            val context = this.applicationContext
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val notifyIntent = Intent(this, MainActivity::class.java)
-
-            val title = task.title
-            val description = task.description
-
-            notifyIntent.putExtra("title", title)
-            notifyIntent.putExtra("message", description)
-            notifyIntent.putExtra("notification", true)
-
-            notifyIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                notifyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            val res = this.resources
-            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mNotification = Notification.Builder(this, CHANNEL_ID)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_alarm_on)
-                    .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
-                    .setAutoCancel(true)
-                    .setContentTitle(title)
-                    .setStyle(
-                        Notification.BigTextStyle()
-                            .bigText(description)
-                    )
-                    .setContentText(description).build()
+            if (intent.hasExtra(GeofenceReceiver.INTENT_EXTRA_GEOFENCE)) {
+                createNotificationForFence(intent.extras!!.getString(GeofenceReceiver.INTENT_EXTRA_GEOFENCE))
             } else {
-                mNotification = Notification.Builder(this)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_alarm_on)
-                    .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
-                    .setAutoCancel(true)
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setContentTitle(title)
-                    .setStyle(
-                        Notification.BigTextStyle()
-                            .bigText(description)
+                val gson = Gson()
+                createNotificationForTask(
+                    gson.fromJson<ToDoTask>(
+                        intent.extras!!.getString(AlarmReceiver.INTENT_EXTRA),
+                        ToDoTask::class.java
                     )
-                    .setSound(uri)
-                    .setContentText(description).build()
+                )
             }
-            notificationManager.notify(mNotificationId, mNotification)
         }
+    }
+
+    private fun createNotificationForFence(title: String?) {
+        val notifyIntent = Intent(this, MainActivity::class.java)
+        notifyIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+        notify(notifyIntent, title, null)
+    }
+
+    private fun createNotificationForTask(task: ToDoTask) {
+
+        val notifyIntent = Intent(this, MainActivity::class.java)
+
+        val title = task.title
+        val description = task.description
+
+        notifyIntent.putExtra("title", title)
+        notifyIntent.putExtra("message", description)
+        notifyIntent.putExtra("notification", true)
+
+        notifyIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+        notify(notifyIntent, title, description)
+    }
+
+    private fun notify(notifyIntent: Intent, title: String?, description: String?) {
+        val context = this.applicationContext
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            notifyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val res = this.resources
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotification = Notification.Builder(this, CHANNEL_ID)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_alarm_on)
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                .setAutoCancel(true)
+                .setContentTitle(title)
+                .setStyle(
+                    Notification.BigTextStyle()
+                        .bigText(description)
+                )
+                .setContentText(description).build()
+        } else {
+            mNotification = Notification.Builder(this)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_alarm_on)
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentTitle(title)
+                .setStyle(
+                    Notification.BigTextStyle()
+                        .bigText(description)
+                )
+                .setSound(uri)
+                .setContentText(description).build()
+        }
+        notificationManager.notify(mNotificationId, mNotification)
+
     }
 }

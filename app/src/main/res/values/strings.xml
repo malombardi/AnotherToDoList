@@ -16,4 +16,7 @@
     <string name="label_alarm_time">Time</string>
     <string name="title_activity_place">Map</string>
     <string name="notification_channel_description">AnotherToDoList notification channel</string>
+    <string name="location_required_error">Location services must be enabled for this.</string>
+    <string name="permission_denied_explanation">You need to grant location permission in order to use this part of the app</string>
+    <string name="settings">Settings</string>
 </resources>

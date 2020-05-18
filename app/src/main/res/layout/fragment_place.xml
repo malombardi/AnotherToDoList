@@ -25,6 +25,7 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/bold"
         android:layout_marginEnd="@dimen/default_margin"
         android:text="@string/cancel"
         android:textColor="@color/primaryTextColor"
@@ -38,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
         android:text="@string/save"
+        android:fontFamily="@font/bold"
         android:textColor="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

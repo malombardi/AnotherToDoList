@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/empty_list"
+        android:fontFamily="@font/bold"
         android:textColor="@color/primaryTextColor"
         android:textSize="22sp"
         android:visibility="gone" />

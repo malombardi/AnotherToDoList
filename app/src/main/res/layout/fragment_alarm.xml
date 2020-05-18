@@ -22,6 +22,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
+            android:fontFamily="@font/normal"
             android:layout_height="wrap_content"
             android:hint="@string/label_alarm_date"
             android:focusableInTouchMode="false"
@@ -42,6 +43,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/normal"
             android:hint="@string/label_alarm_time"
             android:focusableInTouchMode="false"
             android:inputType="textNoSuggestions"
@@ -82,6 +84,7 @@
         android:layout_marginEnd="@dimen/default_margin"
         android:text="@string/cancel"
         android:textColor="@color/primaryTextColor"
+        android:fontFamily="@font/bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/save" />
 
@@ -91,6 +94,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
+        android:fontFamily="@font/bold"
         android:text="@string/save"
         android:textColor="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"

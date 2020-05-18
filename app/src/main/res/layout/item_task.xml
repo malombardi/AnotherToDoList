@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:ellipsize="end"
+            android:fontFamily="@font/bold"
             android:gravity="start"
             android:padding="@dimen/min_padding"
             android:singleLine="true"
@@ -47,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-
             android:padding="@dimen/min_padding"
             android:src="@drawable/ic_location"
             app:layout_constraintBottom_toBottomOf="parent"

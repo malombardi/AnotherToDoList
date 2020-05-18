@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/label_task_title"
             android:imeOptions="actionNext"
+            android:fontFamily="@font/normal"
             android:inputType="textImeMultiLine"
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -44,10 +45,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/label_task_description"
+            android:fontFamily="@font/normal"
             android:imeOptions="actionNext"
             android:inputType="textImeMultiLine"
             android:maxLines="2"
-            android:minHeight="@dimen/default__multiline_min_height" />
+            android:minHeight="@dimen/default_multiline_min_height" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -64,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="false"
+            android:fontFamily="@font/normal"
             android:focusable="true"
             android:imeOptions="actionDone"
             android:inputType="none"
@@ -85,6 +88,7 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/bold"
             android:padding="@dimen/default_padding"
             android:text="@string/add_alarm"
             android:textColor="@color/primaryTextColor"
@@ -99,6 +103,7 @@
             android:layout_alignTop="@id/add_alarm"
             android:layout_alignEnd="@id/add_alarm"
             android:padding="2dp"
+            android:fontFamily="@font/normal"
             android:visibility="gone"
             android:textColor="#FFF"
             android:textSize="16sp"
@@ -122,6 +127,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/default_padding"
             android:text="@string/add_place"
+            android:fontFamily="@font/bold"
             android:textColor="@color/primaryTextColor"
             app:icon="@drawable/ic_add"
             app:iconTint="@color/primaryTextColor" />
@@ -133,6 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/add_place"
             android:layout_alignEnd="@id/add_place"
+            android:fontFamily="@font/normal"
             android:padding="2dp"
             android:visibility="gone"
             android:textColor="#FFF"
@@ -146,6 +153,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin"
+        android:fontFamily="@font/bold"
         android:text="@string/cancel"
         android:textColor="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -157,6 +165,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin"
+        android:fontFamily="@font/bold"
         android:text="@string/save"
         android:textColor="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"

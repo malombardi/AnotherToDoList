@@ -16,9 +16,15 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
         <item name="android:textColorSecondary">@color/primaryTextColor</item>
+        <item name="android:fontFamily">@font/title</item>
+
     </style>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:colorBackground">@color/primaryDarkColor</item>
         <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+    <style name="AppTheme.PopupOverlay.TitleText" parent="@style/Base.TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/toolbar_text</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

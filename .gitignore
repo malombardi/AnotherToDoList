@@ -88,3 +88,5 @@ lint/tmp/
 .gradle/
 gradle/
 gradlew*
+*/.DS_Store
+app/release/

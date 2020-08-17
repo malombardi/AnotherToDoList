@@ -2,17 +2,21 @@ package com.mlprogramming.anothertodolist.place
 
 import android.Manifest
 import android.annotation.TargetApi
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -41,7 +45,6 @@ import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.BACKGROU
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.LOCATION_PERMISSION_INDEX
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_LOCATION_PERMISSION
 import com.mlprogramming.anothertodolist.place.PlaceViewModel.Companion.REQUEST_TURN_DEVICE_LOCATION_ON
 import kotlinx.android.synthetic.main.fragment_place.*
 
@@ -133,6 +136,11 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
                     requestPermissions()
                 }
             }
+            state.permissionsBlocked?.let {
+                if (it){
+                    showSnackBar()
+                }
+            }
         })
     }
 
@@ -159,33 +167,52 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        if (
-            grantResults.isEmpty() ||
-            grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
-            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
-                    grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED)
-        ) {
-            Snackbar.make(
-                requireView(),
-                R.string.permission_denied_explanation, Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction(R.string.settings) {
-                    startActivity(Intent().apply {
-                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
-                }.show()
-        } else {
-            checkDeviceLocationSettingsAndStartGeofence()
-        }
+        if (permissions.isNotEmpty()) {
+            if (grantResults.isEmpty() ||
+                grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
+                (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
+                        grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
+                        PackageManager.PERMISSION_DENIED)
+            ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (neverAskAgainSelected(
+                            requireActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                    ) {
+                        placeViewModel.onHandleIntent(UiIntent.PermissionsDenied)
+                    } else {
+                        setShouldShowStatus(
+                            requireContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                        placeViewModel.onHandleIntent(UiIntent.InitializeVars)
+                    }
+                }
+            } else {
+                checkDeviceLocationSettingsAndStartGeofence()
+            }
 
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
                 placeViewModel.onHandleIntent(UiIntent.PermissionsGranted)
             }
         }
+    }
+
+    private fun showSnackBar() {
+        Snackbar.make(
+            requireView(),
+            R.string.permission_denied_explanation, Snackbar.LENGTH_INDEFINITE
+        )
+            .setAction(R.string.settings) {
+                startActivity(Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    data =
+                        Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+            }.show()
     }
 
     private fun moveCameraToLocation(location: Location?) {
@@ -282,6 +309,7 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
+        placeViewModel.onHandleIntent(UiIntent.RecheckPermissions)
         mapView.onResume()
     }
 
@@ -298,5 +326,37 @@ class PlaceFragment : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    fun neverAskAgainSelected(activity: Activity, permission: String?): Boolean {
+        val prevShouldShowStatus = getRationaleDisplayStatus(activity, permission)
+        val currShouldShowStatus =
+            requireActivity().shouldShowRequestPermissionRationale(permission!!)
+        return prevShouldShowStatus && !currShouldShowStatus
+    }
+
+    private fun getRationaleDisplayStatus(
+        context: Context,
+        permission: String?
+    ): Boolean {
+        val genPrefs = context.getSharedPreferences(
+            "GENERIC_PREFERENCES",
+            Context.MODE_PRIVATE
+        )
+        return genPrefs.getBoolean(permission, false)
+    }
+
+    private fun setShouldShowStatus(
+        context: Context,
+        permission: String?
+    ) {
+        val genPrefs = context.getSharedPreferences(
+            "GENERIC_PREFERENCES",
+            Context.MODE_PRIVATE
+        )
+        val editor = genPrefs.edit()
+        editor.putBoolean(permission, true)
+        editor.commit()
     }
 }

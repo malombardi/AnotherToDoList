@@ -23,7 +23,8 @@ data class UiState(
     val loading: Boolean? = false,
     val save: Boolean? = false,
     val currentLocation: Location? = null,
-    val needPermissions: Boolean? = null
+    val needPermissions: Boolean? = null,
+    val permissionsBlocked: Boolean = false
 )
 
 sealed class UiIntent {
@@ -35,6 +36,8 @@ sealed class UiIntent {
     object NavigationCompleted : UiIntent()
     object InitializeVars : UiIntent()
     object PermissionsGranted : UiIntent()
+    object PermissionsDenied : UiIntent()
+    object RecheckPermissions : UiIntent()
 }
 
 sealed class Command {
@@ -46,6 +49,8 @@ sealed class Command {
     object Cancel : Command()
     object NavigationCompleted : Command()
     object RequestPermissions : Command()
+    object PermissionsDenied : Command()
+    object PermissionsGranted : Command()
 }
 
 class PlaceViewModel(
@@ -64,7 +69,6 @@ class PlaceViewModel(
     }
 
     companion object {
-        const val REQUEST_LOCATION_PERMISSION = 1
         const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
         const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
         const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
@@ -103,7 +107,11 @@ class PlaceViewModel(
 
             is UiIntent.InitializeVars -> initializeVars()
 
-            is UiIntent.PermissionsGranted -> enableMyLocation()
+            is UiIntent.RecheckPermissions -> recheckPermissions()
+
+            is UiIntent.PermissionsGranted -> onCommand(Command.PermissionsGranted)
+
+            is UiIntent.PermissionsDenied -> onCommand(Command.PermissionsDenied)
         }
     }
 
@@ -175,7 +183,8 @@ class PlaceViewModel(
             is Command.UpdateMyPosition -> {
                 state.copy(
                     currentLocation = command.location,
-                    needPermissions = null
+                    needPermissions = null,
+                    permissionsBlocked = false
                 )
             }
 
@@ -184,13 +193,30 @@ class PlaceViewModel(
                     needPermissions = true
                 )
             }
+
+            is Command.PermissionsDenied -> {
+                state.copy(
+                    needPermissions = null,
+                    permissionsBlocked = true
+                )
+            }
+
+            is Command.PermissionsGranted -> {
+                enableMyLocation()
+                state.copy(
+                    needPermissions = false,
+                    permissionsBlocked = false
+                )
+            }
         }
     }
 
     private fun initializeVars() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(activity)
-        geofencingClient = LocationServices.getGeofencingClient(activity)
+        if(!this::fusedLocationProviderClient.isInitialized) {
+            fusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(activity)
+            geofencingClient = LocationServices.getGeofencingClient(activity)
+        }
         enableMyLocation()
     }
 
@@ -203,6 +229,19 @@ class PlaceViewModel(
                     activity.applicationContext,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun recheckPermissions() {
+        if (uiState.value?.permissionsBlocked!! && isPermissionGranted()) {
+            fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                val location = task.result
+                if (location != null) {
+                    onCommand(Command.UpdateMyPosition(location))
+                } else {
+                    requestNewLocationData()
+                }
+            }
+        }
     }
 
     private fun enableMyLocation() {

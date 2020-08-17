@@ -14,4 +14,5 @@
     <dimen name="default_multiline_min_height">96dp</dimen>
 
     <dimen name="big_text">96sp</dimen>
+    <dimen name="toolbar_text">60sp</dimen>
 </resources>
